@@ -73,7 +73,7 @@ function Navbar() {
             >
               <ul className="h-screen items-center justify-center md:flex md:h-auto ">
                 <li className="border-b-2 border-violet-500 py-3 text-center text-sm text-white hover:bg-violet-600  md:border-b-0  md:px-6  md:hover:bg-transparent md:hover:text-violet-600">
-                  <Link href="/books" onClick={() => setNavbar(!navbar)}>
+                  <Link href="/" onClick={() => setNavbar(!navbar)}>
                     Book Club
                   </Link>
                 </li>
@@ -96,7 +96,7 @@ function Navbar() {
                     <SignInButton />
                   </li>
                 )}
-                <li className="border-b-2 border-violet-500 px-6 py-2 text-center text-white  hover:bg-violet-600  md:border-b-0  md:hover:bg-transparent md:hover:text-violet-600">
+                <li className="border-violet-500 px-6 py-2 text-center text-white  hover:bg-violet-600  md:border-b-0  md:hover:bg-transparent md:hover:text-violet-600">
                   <div className="flex justify-center gap-2">
                     <UserButton />
                   </div>

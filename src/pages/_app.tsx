@@ -3,7 +3,6 @@ import { ClerkProvider } from "@clerk/nextjs";
 // import { Inter } from 'next/font/google'
 import { Poppins } from "next/font/google";
 
-import Navbar from "~/components/NavBar";
 
 import { api } from "~/utils/api";
 
@@ -18,13 +17,9 @@ const poppins = Poppins({
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <ClerkProvider {...pageProps}>
-      <main className={poppins.className}>
-
-      <div className="bg-slate-800">
-        <Navbar />
+      <div className={poppins.className}>
         <Component {...pageProps} />
       </div>
-      </main>
     </ClerkProvider>
   );
 };
