@@ -17,6 +17,7 @@ model Book {
     dateFinished DateTime 
     title     String
     author    String
+    genre     String
     imgSrc    String
     description String  @db.VarChar(255)
     userId    String
