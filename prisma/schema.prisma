@@ -11,8 +11,33 @@ datasource db {
   relationMode = "prisma"
 }
 
-model Example {
+model Book {
+    id        String   @id @default(cuid())
+    dateStarted DateTime @default(now())
+    dateFinished DateTime 
+    title     String
+    author    String
+    imgSrc    String
+    description String  @db.VarChar(255)
+    userId    String
+    @@index([userId])
+}
+
+model Wishlist {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    userId    String
+    @@index([userId])
+    items     WishlistItem[]
+}
+
+model WishlistItem {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    title     String
+    author    String
+    description String  @db.VarChar(255)
+    link      String
+    wishlist  Wishlist  @relation(fields: [wishlistId], references: [id])
+    wishlistId  String
 }
