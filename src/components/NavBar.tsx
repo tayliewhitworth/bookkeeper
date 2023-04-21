@@ -84,6 +84,11 @@ function Navbar() {
                         My Books
                       </Link>
                     </li>
+                    <li className="border-b-2 border-violet-500 py-3 text-center text-sm text-white hover:bg-violet-600  md:border-b-0  md:px-6  md:hover:bg-transparent md:hover:text-violet-600">
+                      <Link href="/add-book" onClick={() => setNavbar(!navbar)}>
+                        Add Book
+                      </Link>
+                    </li>
                     <li className="border-b-2 border-violet-500 px-6 py-3 text-center text-sm text-white  hover:bg-violet-600  md:border-b-0  md:hover:bg-transparent md:hover:text-violet-600">
                       <Link href="/wishlist" onClick={() => setNavbar(!navbar)}>
                         Wishlist
