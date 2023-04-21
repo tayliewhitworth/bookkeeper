@@ -1,14 +1,14 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import { api } from "~/utils/api";
+// import { api } from "~/utils/api";
 import { useUser } from "@clerk/nextjs";
-import { useRouter } from "next/router";
+// import { useRouter } from "next/router";
 
-import { useState } from "react";
+// import { useState } from "react";
 
 const AddBook: NextPage = () => {
   const { user } = useUser();
-  const router = useRouter();
+  // const router = useRouter();
 
   if (!user) return null;
 

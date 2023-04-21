@@ -1,8 +1,9 @@
-import { UserButton, useUser } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import { type NextPage } from "next";
 import Head from "next/head";
-import Link from "next/link";
-import Navbar from "~/components/NavBar";
+// import Link from "next/link";
+// import Navbar from "~/components/NavBar";
+import Image from "next/image";
 
 import { api } from "~/utils/api";
 
@@ -51,7 +52,7 @@ const Home: NextPage = () => {
               <div className="flex items-center gap-2 px-5 py-2">
                 <div className="relative h-8 w-8 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-600">
                   {user?.profileImageUrl ? (
-                    <img src={user.profileImageUrl} alt={user.name} />
+                    <img src={user.profileImageUrl} alt={user.name}/>
                   ) : (
                     <svg
                       className="absolute -left-1 h-10 w-10 text-gray-400"

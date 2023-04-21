@@ -1,4 +1,5 @@
 import type { RouterOutputs } from "~/utils/api";
+import Image from "next/image";
 
 type BookPostWithUser = RouterOutputs["books"]["getAll"][number];
 const BookPosts = (props: BookPostWithUser) => {
@@ -8,7 +9,7 @@ const BookPosts = (props: BookPostWithUser) => {
       key={book.id}
       className="max-w-xs overflow-hidden rounded bg-slate-950 py-4 shadow-lg"
     >
-      <img
+      <Image
         src={
           book.imgSrc
             ? book.imgSrc
