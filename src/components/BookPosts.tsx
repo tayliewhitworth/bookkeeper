@@ -1,5 +1,12 @@
 import type { RouterOutputs } from "~/utils/api";
 import Image from "next/image";
+// import Link from 'next/link';
+
+import dayjs from "dayjs";
+
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
 
 type BookPostWithUser = RouterOutputs["books"]["getAll"][number];
 const BookPosts = (props: BookPostWithUser) => {
@@ -9,7 +16,7 @@ const BookPosts = (props: BookPostWithUser) => {
       key={book.id}
       className="max-w-xs overflow-hidden rounded bg-slate-950 py-4 shadow-lg"
     >
-      <Image
+      <img
         src={
           book.imgSrc
             ? book.imgSrc
@@ -17,12 +24,15 @@ const BookPosts = (props: BookPostWithUser) => {
         }
         alt={book.title}
         width={200}
+        height={250}
         className="m-auto flex justify-center rounded object-cover shadow-sm shadow-slate-400"
       />
       <div className="px-5 py-4">
         <div className="mb-2 text-xl font-bold text-violet-300">
           {book.title}
         </div>
+
+        {/* <span>{book.dateStarted.toString()}</span> */}
         <p className="text-sm text-slate-700">
           {book.description.slice(0, 100)}...
         </p>
@@ -30,7 +40,12 @@ const BookPosts = (props: BookPostWithUser) => {
       <div className="flex items-center gap-2 px-5 py-2">
         <div className="relative h-8 w-8 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-600">
           {user?.profileImageUrl ? (
-            <img src={user.profileImageUrl} alt={user.name} />
+            <Image
+              src={user.profileImageUrl}
+              alt={user.name}
+              width={48}
+              height={48}
+            />
           ) : (
             <svg
               className="absolute -left-1 h-10 w-10 text-gray-400"
@@ -50,6 +65,9 @@ const BookPosts = (props: BookPostWithUser) => {
         <div className="text-sm">
           <p className="leading-none text-slate-700">
             {user?.username ? user.username : user?.name}
+            <span className="text-xs">{` ⁘ ${dayjs(
+              book.createdAt
+            ).fromNow()}`}</span>
           </p>
         </div>
       </div>

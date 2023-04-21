@@ -13,6 +13,7 @@ datasource db {
 
 model Book {
     id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
     dateStarted DateTime @default(now())
     dateFinished DateTime 
     title     String
@@ -24,13 +25,6 @@ model Book {
     @@index([userId])
 }
 
-model Wishlist {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    userId    String
-    @@index([userId])
-    items     WishlistItem[]
-}
 
 model WishlistItem {
     id        String   @id @default(cuid())
@@ -39,6 +33,6 @@ model WishlistItem {
     author    String
     description String  @db.VarChar(255)
     link      String
-    wishlist  Wishlist  @relation(fields: [wishlistId], references: [id])
-    wishlistId  String
+    userId    String
+    @@index([userId])
 }

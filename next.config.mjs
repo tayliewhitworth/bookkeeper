@@ -7,6 +7,19 @@ await import("./src/env.mjs");
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: true,
+  images: {
+    domains: ["images.clerk.dev"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "daimanuel.com",
+      },
+      {
+        protocol: "https",
+        hostname: "**.google.com",
+      },
+    ],
+  },
 
   /**
    * If you have `experimental: { appDir: true }` set, then you must comment the below `i18n` config

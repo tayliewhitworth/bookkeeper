@@ -30,7 +30,7 @@ const AddBook: NextPage = () => {
           </p> */}
           <section className="bg-slate-950 max-w-xl m-auto p-1 rounded-lg">
             <div className="mx-auto max-w-2xl px-4 py-8 lg:py-16">
-              <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">
+              <h2 className="mb-4 text-xl font-bold text-white">
                 Add a new book to your collection!
               </h2>
               <form>
@@ -38,7 +38,7 @@ const AddBook: NextPage = () => {
                   <div className="sm:col-span-2">
                     <label
                       htmlFor="title"
-                      className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                      className="mb-2 block text-sm font-medium text-white"
                     >
                       Book Title
                     </label>
@@ -46,7 +46,7 @@ const AddBook: NextPage = () => {
                       type="text"
                       name="title"
                       id="title"
-                      className="focus:ring-primary-600 focus:border-primary-600 dark:focus:ring-primary-500 dark:focus:border-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                      className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border p-2.5 text-sm border-gray-600 bg-gray-700 text-white placeholder-gray-400"
                       placeholder="Type Book Title"
                       required
                     />
@@ -54,7 +54,7 @@ const AddBook: NextPage = () => {
                   <div className="w-full">
                     <label
                       htmlFor="author"
-                      className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                      className="mb-2 block text-sm font-medium text-white"
                     >
                       Author
                     </label>
@@ -62,7 +62,7 @@ const AddBook: NextPage = () => {
                       type="text"
                       name="author"
                       id="author"
-                      className="focus:ring-primary-600 focus:border-primary-600 dark:focus:ring-primary-500 dark:focus:border-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                      className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border p-2.5 text-sm border-gray-600 bg-gray-700 text-white placeholder-gray-400"
                       placeholder="Book Author"
                       required
                     />
@@ -71,7 +71,7 @@ const AddBook: NextPage = () => {
                   <div>
                     <label
                       htmlFor="genre"
-                      className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                      className="mb-2 block text-sm font-medium text-white"
                     >
                       Genre
                     </label>
@@ -80,7 +80,7 @@ const AddBook: NextPage = () => {
                       type="text"
                       name="genre"
                       id="genre"
-                      className="focus:ring-primary-600 focus:border-primary-600 dark:focus:ring-primary-500 dark:focus:border-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                      className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border p-2.5 text-sm border-gray-600 bg-gray-700 text-white placeholder-gray-400"
                       placeholder="Book Genre"
                       required
                     />
@@ -88,7 +88,7 @@ const AddBook: NextPage = () => {
                   <div className="w-full">
                     <label
                       htmlFor="started"
-                      className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                      className="mb-2 block text-sm font-medium text-white"
                     >
                       Date Started
                     </label>
@@ -96,13 +96,33 @@ const AddBook: NextPage = () => {
                       type="date"
                       name="started"
                       id="started"
-                      className="focus:ring-primary-600 focus:border-primary-600 dark:focus:ring-primary-500 dark:focus:border-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                      className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border p-2.5 text-sm border-gray-600 bg-gray-700 text-white placeholder-gray-400"
                     />
                   </div>
-                  <div>
+                  <div className="w-full">
+                    <label
+                      htmlFor="finished"
+                      className="mb-2 block text-sm font-medium text-white"
+                    >
+                      Date Finished
+                    </label>
+                    <input
+                      type="date"
+                      name="finished"
+                      id="finished"
+                      className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border p-2.5 text-sm border-gray-600 bg-gray-700 text-white placeholder-gray-400"
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <div className="py-4 flex items-center gap-2 justify-center">
+                      <button type="button" className="bg-violet-600 focus:ring-violet-500 hover:bg-violet-500 inline-flex items-center rounded-lg px-5 py-2.5 text-center text-sm font-medium text-slate-200 focus:ring-4">
+                        Generate Image Cover
+                      </button>
+                      <span className="text-slate-400"> or enter link below</span>
+                    </div>
                     <label
                       htmlFor="img-link"
-                      className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                      className="mb-2 block text-sm font-medium text-white"
                     >
                       Image Link
                     </label>
@@ -110,7 +130,7 @@ const AddBook: NextPage = () => {
                       type="text"
                       name="img-link"
                       id="img-link"
-                      className="focus:ring-primary-600 focus:border-primary-600 dark:focus:ring-primary-500 dark:focus:border-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                      className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border p-2.5 text-sm border-gray-600 bg-gray-700 text-white placeholder-gray-400"
                       placeholder="https://placehold.co/600?text=Book+Cover&font=roboto"
                       required
                     />
@@ -118,14 +138,14 @@ const AddBook: NextPage = () => {
                   <div className="sm:col-span-2">
                     <label
                       htmlFor="description"
-                      className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                      className="mb-2 block text-sm font-medium text-white"
                     >
                       Description
                     </label>
                     <textarea
                       id="description"
                       rows={8}
-                      className="focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                      className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border p-2.5 text-sm border-gray-600 bg-gray-700 text-white placeholder-gray-400"
                       placeholder="Your description here"
                     ></textarea>
                   </div>
