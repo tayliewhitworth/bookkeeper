@@ -9,7 +9,7 @@ const filterUserForClient = (user: User) => {
     id: user.id,
     username: user.username,
     profileImageUrl: user.profileImageUrl,
-    name: `${user.firstName} ${user.lastName}`,
+    name: `${user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : 'unknown'}`,
   };
 };
 
