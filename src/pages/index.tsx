@@ -4,7 +4,6 @@ import Head from "next/head";
 
 import BookPosts from "~/components/BookPosts";
 
-
 import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
@@ -26,7 +25,9 @@ const Home: NextPage = () => {
       <main className="min-h-screen flex-col items-center">
         {/* <Navbar /> */}
         <div className="m-auto grid grid-cols-1 justify-items-center gap-3 p-4 sm:grid-cols-2 lg:grid-cols-3">
-          {data?.map(({ book, user }) => ( <BookPosts key={book.id} book={book} user={user} /> ))}
+          {data?.map(({ book, user }) => (
+            <BookPosts key={book.id} book={book} user={user} />
+          ))}
           <div className="max-w-xs overflow-hidden rounded bg-slate-950 py-4 shadow-lg">
             <img
               src="https://placehold.co/200x250?text=Book+Cover&font=roboto"

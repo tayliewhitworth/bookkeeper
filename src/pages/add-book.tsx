@@ -1,16 +1,35 @@
 import { type NextPage } from "next";
 import Head from "next/head";
+import { useState } from "react";
 // import { api } from "~/utils/api";
 import { useUser } from "@clerk/nextjs";
 // import { useRouter } from "next/router";
+import Image from "next/image";
 
-// import { useState } from "react";
+import placeholder from "../assets/placeholder.svg";
 
 const AddBook: NextPage = () => {
   const { user } = useUser();
   // const router = useRouter();
 
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [genre, setGenre] = useState("");
+  const [dateStarted, setDateStarted] = useState("");
+  const [dateFinished, setDateFinished] = useState("");
+  const [description, setDescription] = useState("");
+  const [coverImage, setCoverImage] = useState(placeholder);
+
   if (!user) return null;
+
+  const generateImage = async () => {
+    const response = await fetch(
+      `https://www.googleapis.com/books/v1/volumes?q=${title}`
+    );
+    const data = await response.json();
+    const bookCover = data.items[0].volumeInfo.imageLinks.thumbnail;
+    setCoverImage(bookCover);
+  };
 
   return (
     <>
@@ -28,7 +47,7 @@ const AddBook: NextPage = () => {
           <p>
             {user.firstName} {user.lastName}
           </p> */}
-          <section className="bg-slate-950 max-w-xl m-auto p-1 rounded-lg">
+          <section className="m-auto max-w-xl rounded-lg bg-slate-950 p-1">
             <div className="mx-auto max-w-2xl px-4 py-8 lg:py-16">
               <h2 className="mb-4 text-xl font-bold text-white">
                 Add a new book to your collection!
@@ -46,7 +65,9 @@ const AddBook: NextPage = () => {
                       type="text"
                       name="title"
                       id="title"
-                      className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border p-2.5 text-sm border-gray-600 bg-gray-700 text-white placeholder-gray-400"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 text-sm text-white placeholder-gray-400"
                       placeholder="Type Book Title"
                       required
                     />
@@ -62,12 +83,14 @@ const AddBook: NextPage = () => {
                       type="text"
                       name="author"
                       id="author"
-                      className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border p-2.5 text-sm border-gray-600 bg-gray-700 text-white placeholder-gray-400"
+                      value={author}
+                      onChange={(e) => setAuthor(e.target.value)}
+                      className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 text-sm text-white placeholder-gray-400"
                       placeholder="Book Author"
                       required
                     />
                   </div>
-                  
+
                   <div>
                     <label
                       htmlFor="genre"
@@ -80,7 +103,9 @@ const AddBook: NextPage = () => {
                       type="text"
                       name="genre"
                       id="genre"
-                      className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border p-2.5 text-sm border-gray-600 bg-gray-700 text-white placeholder-gray-400"
+                      value={genre}
+                      onChange={(e) => setGenre(e.target.value)}
+                      className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 text-sm text-white placeholder-gray-400"
                       placeholder="Book Genre"
                       required
                     />
@@ -96,7 +121,9 @@ const AddBook: NextPage = () => {
                       type="date"
                       name="started"
                       id="started"
-                      className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border p-2.5 text-sm border-gray-600 bg-gray-700 text-white placeholder-gray-400"
+                      value={dateStarted}
+                      onChange={(e) => setDateStarted(e.target.value)}
+                      className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 text-sm text-white placeholder-gray-400"
                     />
                   </div>
                   <div className="w-full">
@@ -110,17 +137,31 @@ const AddBook: NextPage = () => {
                       type="date"
                       name="finished"
                       id="finished"
-                      className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border p-2.5 text-sm border-gray-600 bg-gray-700 text-white placeholder-gray-400"
+                      value={dateFinished}
+                      onChange={(e) => setDateFinished(e.target.value)}
+                      className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 text-sm text-white placeholder-gray-400"
                     />
                   </div>
                   <div className="sm:col-span-2">
-                    <div className="py-4 flex items-center gap-2 justify-center">
-                      <button type="button" className="bg-violet-600 focus:ring-violet-500 hover:bg-violet-500 inline-flex items-center rounded-lg px-5 py-2.5 text-center text-sm font-medium text-slate-200 focus:ring-4">
+                    <div className="flex items-center justify-around gap-2 py-4">
+                      <button
+                        onClick={generateImage}
+                        type="button"
+                        className="inline-flex items-center rounded-lg bg-violet-600 px-5 py-2.5 text-center text-sm font-medium text-slate-200 hover:bg-violet-500 focus:ring-4 focus:ring-violet-500"
+                      >
                         Generate Image Cover
                       </button>
-                      <span className="text-slate-400"> or enter link below</span>
+                      {coverImage && (
+                        <Image
+                          width={80}
+                          height={80}
+                          src={coverImage}
+                          alt="Book Cover"
+                          className="rounded shadow shadow-white"
+                        />
+                      )}
                     </div>
-                    <label
+                    {/* <label
                       htmlFor="img-link"
                       className="mb-2 block text-sm font-medium text-white"
                     >
@@ -130,10 +171,10 @@ const AddBook: NextPage = () => {
                       type="text"
                       name="img-link"
                       id="img-link"
-                      className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border p-2.5 text-sm border-gray-600 bg-gray-700 text-white placeholder-gray-400"
+                      className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 text-sm text-white placeholder-gray-400"
                       placeholder="https://placehold.co/600?text=Book+Cover&font=roboto"
                       required
-                    />
+                    /> */}
                   </div>
                   <div className="sm:col-span-2">
                     <label
@@ -145,14 +186,16 @@ const AddBook: NextPage = () => {
                     <textarea
                       id="description"
                       rows={8}
-                      className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border p-2.5 text-sm border-gray-600 bg-gray-700 text-white placeholder-gray-400"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 text-sm text-white placeholder-gray-400"
                       placeholder="Your description here"
                     ></textarea>
                   </div>
                 </div>
                 <button
                   type="submit"
-                  className="bg-violet-400 focus:ring-violet-500 hover:bg-violet-600 mt-4 inline-flex items-center rounded-lg px-5 py-2.5 text-center text-sm font-medium text-slate-200 focus:ring-4 sm:mt-6"
+                  className="mt-4 inline-flex items-center rounded-lg bg-violet-400 px-5 py-2.5 text-center text-sm font-medium text-slate-200 hover:bg-violet-600 focus:ring-4 focus:ring-violet-500 sm:mt-6"
                 >
                   Add Book
                 </button>

@@ -15,8 +15,8 @@ const config = {
         hostname: "daimanuel.com",
       },
       {
-        protocol: "https",
-        hostname: "**.google.com",
+        protocol: "http",
+        hostname: "books.google.com",
       },
     ],
   },
