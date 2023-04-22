@@ -10,7 +10,7 @@ import type { StaticImageData } from "next/image";
 import placeholder from "../assets/placeholder.svg";
 const placeholderImage = placeholder as StaticImageData;
 
-interface BookCoverData {
+interface BookCoverResponseBody {
   items: {
     volumeInfo: {
       imageLinks?: {
@@ -39,7 +39,7 @@ const AddBook: NextPage = () => {
     const response = await fetch(
       `https://www.googleapis.com/books/v1/volumes?q=${title}`
     );
-    const data: BookCoverData = await response.json();
+    const data = (await response.json()) as BookCoverResponseBody;
     const bookCover: string | null | undefined =
       data.items[0]?.volumeInfo?.imageLinks?.thumbnail;
     setCoverImage(bookCover);
@@ -159,7 +159,9 @@ const AddBook: NextPage = () => {
                   <div className="sm:col-span-2">
                     <div className="flex flex-wrap items-center justify-around gap-3 py-4">
                       <button
-                        onClick={generateImage}
+                        onClick={(): void => {
+                          generateImage();
+                        }}
                         type="button"
                         className="inline-flex items-center rounded-lg bg-violet-600 px-5 py-2.5 text-center text-sm font-medium text-slate-200 hover:bg-violet-500 focus:ring-4 focus:ring-violet-500"
                       >
