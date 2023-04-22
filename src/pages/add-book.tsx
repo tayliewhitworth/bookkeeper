@@ -4,10 +4,19 @@ import { useState } from "react";
 // import { api } from "~/utils/api";
 import { useUser } from "@clerk/nextjs";
 // import { useRouter } from "next/router";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 
 import placeholder from "../assets/placeholder.svg";
 
+interface BookCoverData {
+  items: {
+    volumeInfo: {
+      imageLinks?: {
+        thumbnail?: string | null;
+      };
+    };
+  }[];
+}
 const AddBook: NextPage = () => {
   const { user } = useUser();
   // const router = useRouter();
@@ -18,16 +27,19 @@ const AddBook: NextPage = () => {
   const [dateStarted, setDateStarted] = useState("");
   const [dateFinished, setDateFinished] = useState("");
   const [description, setDescription] = useState("");
-  const [coverImage, setCoverImage] = useState(placeholder);
+  const [coverImage, setCoverImage] = useState<
+    string | StaticImageData | null | undefined
+  >(placeholder);
 
   if (!user) return null;
 
-  const generateImage = async () => {
+  const generateImage = async (): Promise<void> => {
     const response = await fetch(
       `https://www.googleapis.com/books/v1/volumes?q=${title}`
     );
-    const data = await response.json();
-    const bookCover = data.items[0].volumeInfo.imageLinks.thumbnail;
+    const data: BookCoverData = await response.json();
+    const bookCover: string | null | undefined =
+      data.items[0]?.volumeInfo?.imageLinks?.thumbnail;
     setCoverImage(bookCover);
   };
 
