@@ -4,9 +4,11 @@ import { useState } from "react";
 // import { api } from "~/utils/api";
 import { useUser } from "@clerk/nextjs";
 // import { useRouter } from "next/router";
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
+import type { StaticImageData } from "next/image";
 
 import placeholder from "../assets/placeholder.svg";
+const placeholderImage = placeholder as StaticImageData;
 
 interface BookCoverData {
   items: {
@@ -29,7 +31,7 @@ const AddBook: NextPage = () => {
   const [description, setDescription] = useState("");
   const [coverImage, setCoverImage] = useState<
     string | StaticImageData | null | undefined
-  >(placeholder);
+  >(placeholderImage);
 
   if (!user) return null;
 
@@ -155,7 +157,7 @@ const AddBook: NextPage = () => {
                     />
                   </div>
                   <div className="sm:col-span-2">
-                    <div className="flex items-center justify-around gap-2 py-4">
+                    <div className="flex flex-wrap items-center justify-around gap-3 py-4">
                       <button
                         onClick={generateImage}
                         type="button"
@@ -169,7 +171,7 @@ const AddBook: NextPage = () => {
                           height={80}
                           src={coverImage}
                           alt="Book Cover"
-                          className="rounded shadow shadow-white"
+                          className="aspect-auto rounded shadow shadow-white"
                         />
                       )}
                     </div>
