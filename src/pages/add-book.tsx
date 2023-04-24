@@ -57,10 +57,10 @@ const AddBook: NextPage = () => {
     [title, author, genre, dateStarted, description].every(Boolean) &&
     !mutation.isLoading;
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const imgSrc =
       typeof coverImage === "string" ? coverImage : coverImage?.src;
-    mutation
+    await mutation
       .mutateAsync({
         title,
         author,
