@@ -31,22 +31,13 @@ const AddBook: NextPage = () => {
   const [dateStarted, setDateStarted] = useState("");
   const [dateFinished, setDateFinished] = useState("");
   const [description, setDescription] = useState("");
-  const [coverImage, setCoverImage] = useState<string | StaticImageData | null | undefined>(placeholderImage);
+  const [coverImage, setCoverImage] = useState<
+    string | StaticImageData | null | undefined
+  >(placeholderImage);
 
-  const ctx = api.useContext()
-
-  const mutation = api.books.create.useMutation({
-    onSuccess: () => {
-      void ctx.books.getAll.invalidate()
-    },
-    onError: (error) => {
-      const errorMessage = error?.data?.zodError?.fieldErrors;
-      console.log(errorMessage);
-    },
-  });
+  const mutation = api.books.create.useMutation();
 
   if (!user) return null;
-
 
   const generateImage = async (): Promise<void> => {
     try {
@@ -66,21 +57,31 @@ const AddBook: NextPage = () => {
     [title, author, genre, dateStarted, description].every(Boolean) &&
     !mutation.isLoading;
 
-  const handleSubmit = () => {
-    const imgSrc = typeof coverImage === "string" ? coverImage : coverImage?.src;
-    mutation.mutateAsync({
-      title,
-      author,
-      genre,
-      dateStarted: new Date(dateStarted).toISOString(),
-      dateFinished: new Date(dateFinished).toISOString(),
-      description,
-      imgSrc: imgSrc !== undefined ? imgSrc : "",
-    }).then(() => {
-      router.push("/")
-    })
+  const handleSubmit = async () => {
+    const imgSrc =
+      typeof coverImage === "string" ? coverImage : coverImage?.src;
+    try {
+      await mutation
+        .mutateAsync({
+          title,
+          author,
+          genre,
+          dateStarted: new Date(dateStarted).toISOString(),
+          dateFinished: new Date(dateFinished).toISOString(),
+          description,
+          imgSrc: imgSrc !== undefined ? imgSrc : "",
+        })
+        .then(() => {
+          router.push("/");
+        })
+        .catch((error) => {
+          const errorMessage = error?.data?.zodError?.fieldErrors;
+          console.log(errorMessage);
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
-
 
   return (
     <>
@@ -221,7 +222,7 @@ const AddBook: NextPage = () => {
                     ></textarea>
                   </div>
                 </div>
-                
+
                 <button
                   type="submit"
                   onClick={handleSubmit}
