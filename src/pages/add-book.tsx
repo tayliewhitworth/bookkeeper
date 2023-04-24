@@ -38,7 +38,6 @@ const AddBook: NextPage = () => {
   const ctx = api.useContext();
   const { mutate, isLoading } = api.books.create.useMutation({
     onSuccess: () => {
-      router.push("/");
       void ctx.books.getAll.invalidate();
     },
     onError: (err) => {
@@ -85,7 +84,7 @@ const AddBook: NextPage = () => {
   //       void ctx.books.getAll.invalidate();
   //     });
   // };
-  let imgSrc = typeof coverImage === "string" ? coverImage : coverImage?.src;
+  const imgSrc = typeof coverImage === "string" ? coverImage : coverImage?.src;
 
   return (
     <>
