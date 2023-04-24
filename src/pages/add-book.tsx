@@ -37,7 +37,6 @@ const AddBook: NextPage = () => {
 
   const mutation = api.books.create.useMutation({
     onSuccess: () => {
-      router.push('/')
       void ctx.books.getAll.invalidate()
     },
     onError: (error) => {
@@ -69,7 +68,7 @@ const AddBook: NextPage = () => {
 
   const handleSubmit = () => {
     const imgSrc = typeof coverImage === "string" ? coverImage : coverImage?.src;
-    mutation.mutate({
+    mutation.mutateAsync({
       title,
       author,
       genre,
@@ -77,6 +76,8 @@ const AddBook: NextPage = () => {
       dateFinished: new Date(dateFinished).toISOString(),
       description,
       imgSrc: imgSrc !== undefined ? imgSrc : "",
+    }).then(() => {
+      router.push("/")
     })
   };
 
