@@ -9,6 +9,7 @@ import type { StaticImageData } from "next/image";
 
 import placeholder from "../assets/placeholder.svg";
 import { LoadingSpinner } from "~/components/loading";
+
 const placeholderImage = placeholder as StaticImageData;
 
 interface BookCoverResponseBody {
@@ -32,9 +33,12 @@ const AddBook: NextPage = () => {
   const [description, setDescription] = useState("");
   const [coverImage, setCoverImage] = useState<string | StaticImageData | null | undefined>(placeholderImage);
 
+  const ctx = api.useContext()
+
   const mutation = api.books.create.useMutation({
     onSuccess: () => {
-      router.push("/")
+      router.push('/')
+      void ctx.books.getAll.invalidate()
     },
     onError: (error) => {
       const errorMessage = error?.data?.zodError?.fieldErrors;
@@ -64,6 +68,7 @@ const AddBook: NextPage = () => {
     !mutation.isLoading;
 
   const handleSubmit = () => {
+    const imgSrc = typeof coverImage === "string" ? coverImage : coverImage?.src;
     mutation.mutate({
       title,
       author,
@@ -71,7 +76,7 @@ const AddBook: NextPage = () => {
       dateStarted: new Date(dateStarted).toISOString(),
       dateFinished: new Date(dateFinished).toISOString(),
       description,
-      imgSrc: `${coverImage}`,
+      imgSrc: imgSrc !== undefined ? imgSrc : "",
     })
   };
 
