@@ -57,30 +57,22 @@ const AddBook: NextPage = () => {
     [title, author, genre, dateStarted, description].every(Boolean) &&
     !mutation.isLoading;
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     const imgSrc =
       typeof coverImage === "string" ? coverImage : coverImage?.src;
-    try {
-      await mutation
-        .mutateAsync({
-          title,
-          author,
-          genre,
-          dateStarted: new Date(dateStarted).toISOString(),
-          dateFinished: new Date(dateFinished).toISOString(),
-          description,
-          imgSrc: imgSrc !== undefined ? imgSrc : "",
-        })
-        .then(() => {
-          router.push("/");
-        })
-        .catch((error) => {
-          const errorMessage = error?.data?.zodError?.fieldErrors;
-          console.log(errorMessage);
-        });
-    } catch (error) {
-      console.log(error);
-    }
+    mutation
+      .mutateAsync({
+        title,
+        author,
+        genre,
+        dateStarted: new Date(dateStarted).toISOString(),
+        dateFinished: new Date(dateFinished).toISOString(),
+        description,
+        imgSrc: imgSrc !== undefined ? imgSrc : "",
+      })
+      .then(() => {
+        router.push("/");
+      });
   };
 
   return (
