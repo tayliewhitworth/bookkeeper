@@ -18,6 +18,10 @@ const config = {
         protocol: "http",
         hostname: "books.google.com",
       },
+      {
+        protocol: "https",
+        hostname: "placehold.co",
+      },
     ],
   },
 

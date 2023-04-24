@@ -36,6 +36,9 @@ const BookPosts = (props: BookPostWithUser) => {
         <p className="text-sm text-slate-700">
           {book.description.slice(0, 100)}...
         </p>
+        <div className="mt-2">
+            <button className="text-xs font-medium bg-violet-500 hover:bg-violet-400 transition-colors text-slate-950 p-1 rounded">+ to wishlist</button>
+          </div>
       </div>
       <div className="flex items-center gap-2 px-5 py-2">
         <div className="relative h-8 w-8 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-600">

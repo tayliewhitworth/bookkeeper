@@ -6,10 +6,13 @@ import logo from "../assets/bookLogo.png";
 
 import { useState } from "react";
 
+
 function Navbar() {
-  const user = useUser();
+  const { isSignedIn, isLoaded: userLoaded } = useUser();
 
   const [navbar, setNavbar] = useState(false);
+
+  if (!userLoaded) return <div className="p-3 w-full rounded-md bg-slate-950"></div>
 
   return (
     <div className="p-3">
@@ -67,7 +70,7 @@ function Navbar() {
           </div>
           <div>
             <div
-              className={`mt-8 flex-1 justify-self-center pb-3 md:mt-0 md:block md:pb-0 ${
+              className={`mt-8 flex-1 justify-self-center transition-all pb-3 md:mt-0 md:block md:pb-0 ${
                 navbar ? "block p-12 md:p-0" : "hidden"
               }`}
             >
@@ -77,7 +80,7 @@ function Navbar() {
                     Book Club
                   </Link>
                 </li>
-                {user.isSignedIn && (
+                {isSignedIn && (
                   <>
                     <li className="border-b-2 border-violet-500 py-3 text-center text-sm text-white hover:bg-violet-600  md:border-b-0  md:px-6  md:hover:bg-transparent md:hover:text-violet-600">
                       <Link href="/books" onClick={() => setNavbar(!navbar)}>
@@ -96,7 +99,7 @@ function Navbar() {
                     </li>
                   </>
                 )}
-                {!user.isSignedIn && (
+                {!isSignedIn && (
                   <li className="border-b-2 border-violet-500 px-6 py-3 text-center text-sm text-white  hover:bg-violet-600  md:border-b-0  md:hover:bg-transparent md:hover:text-violet-600">
                     <SignInButton />
                   </li>

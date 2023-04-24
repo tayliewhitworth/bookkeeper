@@ -1,13 +1,14 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import { useState } from "react";
-// import { api } from "~/utils/api";
+import { api } from "~/utils/api";
 import { useUser } from "@clerk/nextjs";
-// import { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import Image from "next/image";
 import type { StaticImageData } from "next/image";
 
 import placeholder from "../assets/placeholder.svg";
+import { LoadingSpinner } from "~/components/loading";
 const placeholderImage = placeholder as StaticImageData;
 
 interface BookCoverResponseBody {
@@ -21,7 +22,7 @@ interface BookCoverResponseBody {
 }
 const AddBook: NextPage = () => {
   const { user } = useUser();
-  // const router = useRouter();
+  const router = useRouter();
 
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
@@ -29,11 +30,20 @@ const AddBook: NextPage = () => {
   const [dateStarted, setDateStarted] = useState("");
   const [dateFinished, setDateFinished] = useState("");
   const [description, setDescription] = useState("");
-  const [coverImage, setCoverImage] = useState<
-    string | StaticImageData | null | undefined
-  >(placeholderImage);
+  const [coverImage, setCoverImage] = useState<string | StaticImageData | null | undefined>(placeholderImage);
+
+  const mutation = api.books.create.useMutation({
+    onSuccess: () => {
+      router.push("/")
+    },
+    onError: (error) => {
+      const errorMessage = error?.data?.zodError?.fieldErrors;
+      console.log(errorMessage);
+    },
+  });
 
   if (!user) return null;
+
 
   const generateImage = async (): Promise<void> => {
     try {
@@ -49,6 +59,23 @@ const AddBook: NextPage = () => {
     }
   };
 
+  const canSave =
+    [title, author, genre, dateStarted, description].every(Boolean) &&
+    !mutation.isLoading;
+
+  const handleSubmit = () => {
+    mutation.mutate({
+      title,
+      author,
+      genre,
+      dateStarted: new Date(dateStarted).toISOString(),
+      dateFinished: new Date(dateFinished).toISOString(),
+      description,
+      imgSrc: `${coverImage}`,
+    })
+  };
+
+
   return (
     <>
       <Head>
@@ -56,15 +83,6 @@ const AddBook: NextPage = () => {
       </Head>
       <main className="min-h-screen flex-col items-center p-4">
         <div>
-          {/* <img
-            className="rounded-full"
-            src={user.profileImageUrl}
-            width={30}
-            height={30}
-          />
-          <p>
-            {user.firstName} {user.lastName}
-          </p> */}
           <section className="m-auto max-w-xl rounded-lg bg-slate-950 p-1">
             <div className="mx-auto max-w-2xl px-4 py-8 lg:py-16">
               <h2 className="mb-4 text-xl font-bold text-white">
@@ -136,7 +154,7 @@ const AddBook: NextPage = () => {
                       Date Started
                     </label>
                     <input
-                      type="date"
+                      type="datetime-local"
                       name="started"
                       id="started"
                       value={dateStarted}
@@ -152,7 +170,7 @@ const AddBook: NextPage = () => {
                       Date Finished
                     </label>
                     <input
-                      type="date"
+                      type="datetime-local"
                       name="finished"
                       id="finished"
                       value={dateFinished}
@@ -175,24 +193,10 @@ const AddBook: NextPage = () => {
                           height={80}
                           src={coverImage}
                           alt="Book Cover"
-                          className="aspect-auto rounded shadow shadow-white h-auto"
+                          className="aspect-auto h-auto rounded shadow shadow-white"
                         />
                       )}
                     </div>
-                    {/* <label
-                      htmlFor="img-link"
-                      className="mb-2 block text-sm font-medium text-white"
-                    >
-                      Image Link
-                    </label>
-                    <input
-                      type="text"
-                      name="img-link"
-                      id="img-link"
-                      className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 text-sm text-white placeholder-gray-400"
-                      placeholder="https://placehold.co/600?text=Book+Cover&font=roboto"
-                      required
-                    /> */}
                   </div>
                   <div className="sm:col-span-2">
                     <label
@@ -211,12 +215,20 @@ const AddBook: NextPage = () => {
                     ></textarea>
                   </div>
                 </div>
+                
                 <button
                   type="submit"
+                  onClick={handleSubmit}
+                  disabled={!canSave}
                   className="mt-4 inline-flex items-center rounded-lg bg-violet-400 px-5 py-2.5 text-center text-sm font-medium text-slate-200 hover:bg-violet-600 focus:ring-4 focus:ring-violet-500 sm:mt-6"
                 >
                   Add Book
                 </button>
+                {mutation.isLoading && (
+                  <div>
+                    <LoadingSpinner />
+                  </div>
+                )}
               </form>
             </div>
           </section>
