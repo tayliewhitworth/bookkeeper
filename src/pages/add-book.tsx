@@ -35,7 +35,17 @@ const AddBook: NextPage = () => {
     string | StaticImageData | null | undefined
   >(placeholderImage);
 
-  const mutation = api.books.create.useMutation();
+  const ctx = api.useContext();
+  const { mutate, isLoading } = api.books.create.useMutation({
+    onSuccess: () => {
+      router.push("/");
+      void ctx.books.getAll.invalidate();
+    },
+    onError: (err) => {
+      const errorMessage = err?.data?.zodError?.fieldErrors;
+      console.log(errorMessage);
+    },
+  });
 
   if (!user) return null;
 
@@ -55,25 +65,27 @@ const AddBook: NextPage = () => {
 
   const canSave =
     [title, author, genre, dateStarted, description].every(Boolean) &&
-    !mutation.isLoading;
+    !isLoading;
 
-  const handleSubmit = async () => {
-    const imgSrc =
-      typeof coverImage === "string" ? coverImage : coverImage?.src;
-    await mutation
-      .mutateAsync({
-        title,
-        author,
-        genre,
-        dateStarted: new Date(dateStarted).toISOString(),
-        dateFinished: new Date(dateFinished).toISOString(),
-        description,
-        imgSrc: imgSrc !== undefined ? imgSrc : "",
-      })
-      .then(() => {
-        router.push("/");
-      });
-  };
+  // const handleSubmit = () => {
+  //   const imgSrc =
+  //     typeof coverImage === "string" ? coverImage : coverImage?.src;
+  //   mutation
+  //     .mutateAsync({
+  //       title,
+  //       author,
+  //       genre,
+  //       dateStarted: new Date(dateStarted).toISOString(),
+  //       dateFinished: new Date(dateFinished).toISOString(),
+  //       description,
+  //       imgSrc: imgSrc !== undefined ? imgSrc : "",
+  //     })
+  //     .then(() => {
+  //       router.push("/");
+  //       void ctx.books.getAll.invalidate();
+  //     });
+  // };
+  let imgSrc = typeof coverImage === "string" ? coverImage : coverImage?.src;
 
   return (
     <>
@@ -217,13 +229,23 @@ const AddBook: NextPage = () => {
 
                 <button
                   type="submit"
-                  onClick={handleSubmit}
+                  onClick={() =>
+                    mutate({
+                      title,
+                      author,
+                      genre,
+                      dateStarted: new Date(dateStarted).toISOString(),
+                      dateFinished: new Date(dateFinished).toISOString(),
+                      description,
+                      imgSrc: imgSrc !== undefined ? imgSrc : "",
+                    })
+                  }
                   disabled={!canSave}
                   className="mt-4 inline-flex items-center rounded-lg bg-violet-400 px-5 py-2.5 text-center text-sm font-medium text-slate-200 hover:bg-violet-600 focus:ring-4 focus:ring-violet-500 sm:mt-6"
                 >
                   Add Book
                 </button>
-                {mutation.isLoading && (
+                {isLoading && (
                   <div>
                     <LoadingSpinner />
                   </div>
