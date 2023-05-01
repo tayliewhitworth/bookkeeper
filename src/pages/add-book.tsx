@@ -3,14 +3,26 @@ import Head from "next/head";
 import { useState } from "react";
 import { api } from "~/utils/api";
 import { useUser } from "@clerk/nextjs";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import type { StaticImageData } from "next/image";
+
+// import { useForm } from "react-hook-form";
 
 import placeholder from "../assets/placeholder.svg";
 import { LoadingSpinner } from "~/components/loading";
 
 const placeholderImage = placeholder as StaticImageData;
+
+// type AddBookFormData = {
+//   title: string;
+//   author: string;
+//   genre: string;
+//   dateStarted: string;
+//   dateFinished: string;
+//   description: string;
+//   coverImage: string | StaticImageData | null | undefined;
+// }
 
 interface BookCoverResponseBody {
   items: {
@@ -21,6 +33,7 @@ interface BookCoverResponseBody {
     };
   }[];
 }
+
 const AddBook: NextPage = () => {
   const { user } = useUser();
   const router = useRouter();
@@ -39,6 +52,7 @@ const AddBook: NextPage = () => {
   const { mutate, isLoading } = api.books.create.useMutation({
     onSuccess: () => {
       void ctx.books.getAll.invalidate();
+      router.push("/");
     },
     onError: (err) => {
       const errorMessage = err?.data?.zodError?.fieldErrors;
@@ -66,24 +80,6 @@ const AddBook: NextPage = () => {
     [title, author, genre, dateStarted, description].every(Boolean) &&
     !isLoading;
 
-  // const handleSubmit = () => {
-  //   const imgSrc =
-  //     typeof coverImage === "string" ? coverImage : coverImage?.src;
-  //   mutation
-  //     .mutateAsync({
-  //       title,
-  //       author,
-  //       genre,
-  //       dateStarted: new Date(dateStarted).toISOString(),
-  //       dateFinished: new Date(dateFinished).toISOString(),
-  //       description,
-  //       imgSrc: imgSrc !== undefined ? imgSrc : "",
-  //     })
-  //     .then(() => {
-  //       router.push("/");
-  //       void ctx.books.getAll.invalidate();
-  //     });
-  // };
   const imgSrc = typeof coverImage === "string" ? coverImage : coverImage?.src;
 
   return (
@@ -228,7 +224,8 @@ const AddBook: NextPage = () => {
 
                 <button
                   type="submit"
-                  onClick={() =>
+                  onClick={(e) => {
+                    e.preventDefault();
                     mutate({
                       title,
                       author,
@@ -237,8 +234,8 @@ const AddBook: NextPage = () => {
                       dateFinished: new Date(dateFinished).toISOString(),
                       description,
                       imgSrc: imgSrc !== undefined ? imgSrc : "",
-                    })
-                  }
+                    });
+                  }}
                   disabled={!canSave}
                   className="mt-4 inline-flex items-center rounded-lg bg-violet-400 px-5 py-2.5 text-center text-sm font-medium text-slate-200 hover:bg-violet-600 focus:ring-4 focus:ring-violet-500 sm:mt-6"
                 >

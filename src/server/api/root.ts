@@ -1,5 +1,6 @@
 import { createTRPCRouter } from "~/server/api/trpc";
 import { booksRouter } from "./routers/books";
+import { wishlistRouter } from "./routers/wishlist";
 
 /**
  * This is the primary router for your server.
@@ -8,6 +9,7 @@ import { booksRouter } from "./routers/books";
  */
 export const appRouter = createTRPCRouter({
   books: booksRouter,
+  wishlistItem: wishlistRouter,
 });
 
 // export type definition of API
