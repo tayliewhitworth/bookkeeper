@@ -29,7 +29,7 @@ const addUserToWishlistItem = async (wishlistItems: WishlistItem[]) => {
       if (!user.externalUsername) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: `User has no Github Account: ${wishlistItem.id}`,
+          message: `User has no External Username: ${wishlistItem.id}`,
         });
       }
       user.username = user.externalUsername;

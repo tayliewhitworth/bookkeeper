@@ -2,6 +2,14 @@ import type { NextPage, GetStaticProps } from "next";
 import Head from "next/head";
 import { api } from "~/utils/api";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
+import Image from "next/image";
+import Link from "next/link";
+
+import dayjs from "dayjs";
+
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
 
 const SingleBookPage: NextPage<{ id: string }> = ({ id }) => {
   const { data } = api.books.getById.useQuery({ id });
@@ -13,7 +21,69 @@ const SingleBookPage: NextPage<{ id: string }> = ({ id }) => {
       <Head>
         <title>{data.book.title}</title>
       </Head>
-      <div>{data.book.title}</div>
+      <div className="min-h-screenp-4 mx-auto my-4 max-w-3xl p-2">
+        <div className="flex items-center gap-4 p-4">
+          <div className="overflow-hidden rounded-full">
+            <Image
+              src={data.user.profileImageUrl}
+              width={50}
+              height={50}
+              alt={data.user.username ?? data.user.externalUsername}
+            />
+          </div>
+          <div>
+            <Link
+              href={`/@${
+                data.user?.username ? data.user.username : data.user.id
+              }`}
+            >
+              <p className="text-2xl font-bold text-violet-300">
+                @{data.user.username ?? data.user.externalUsername}
+              </p>
+            </Link>
+            <p className="text-slate-500">
+              posted {dayjs(data.book.createdAt).fromNow()}
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-col justify-evenly gap-2 p-4 max-md:items-center md:flex-row">
+          <div className="p-4">
+            <Image
+              src={data.book.imgSrc}
+              width={300}
+              height={300}
+              alt={data.book.title}
+              className="rounded-lg shadow-lg shadow-slate-900"
+            />
+          </div>
+          <div className="flex flex-col items-start justify-evenly gap-4 text-gray-600">
+            <div className="grid gap-3 rounded-lg bg-slate-200 p-4">
+              <div>
+                <h1 className="text-4xl font-bold text-violet-400">
+                  {data.book.title}
+                </h1>
+                <p className="text-slate-500">by {data.book.author}</p>
+              </div>
+              <div>
+                <p className="max-w-sm text-lg">{data.book.description}</p>
+              </div>
+            </div>
+            <div className="flex items-center justify-center rounded-lg bg-slate-950 p-4 text-violet-300">
+              <p>
+                Date Started:{" "}
+                {dayjs(data.book.dateStarted).format("MM/DD/YYYY")}
+              </p>
+              <p>
+                Date Finished:{" "}
+                {dayjs(data.book.dateFinished).format("MM/DD/YYYY")}
+              </p>
+            </div>
+            <div className="rounded-lg bg-violet-300 p-4">
+              <p>Genre: {data.book.genre}</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 };
