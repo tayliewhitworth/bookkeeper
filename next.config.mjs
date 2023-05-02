@@ -12,7 +12,7 @@ const config = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "daimanuel.com",
+        hostname: "www.daimanuel.com",
       },
       {
         protocol: "http",

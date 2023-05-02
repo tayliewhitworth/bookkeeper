@@ -1,6 +1,6 @@
 import type { RouterOutputs } from "~/utils/api";
 import Image from "next/image";
-// import Link from 'next/link';
+import Link from "next/link";
 
 import dayjs from "dayjs";
 
@@ -16,7 +16,7 @@ const BookPosts = (props: BookPostWithUser) => {
       key={book.id}
       className="max-w-xs overflow-hidden rounded bg-slate-950 py-4 shadow-lg"
     >
-      <img
+      <Image
         src={
           book.imgSrc
             ? book.imgSrc
@@ -29,16 +29,17 @@ const BookPosts = (props: BookPostWithUser) => {
       />
       <div className="px-5 py-4">
         <div className="mb-2 text-xl font-bold text-violet-300">
-          {book.title}
+          <Link href={`/book/${book.id}`}>{book.title}</Link>
         </div>
 
-        {/* <span>{book.dateStarted.toString()}</span> */}
         <p className="text-sm text-slate-700">
           {book.description.slice(0, 100)}...
         </p>
         <div className="mt-2">
-            <button className="text-xs font-medium bg-violet-500 hover:bg-violet-400 transition-colors text-slate-950 p-1 rounded">+ to wishlist</button>
-          </div>
+          <button className="rounded bg-violet-500 p-1 text-xs font-medium text-slate-950 transition-colors hover:bg-violet-400">
+            + to wishlist
+          </button>
+        </div>
       </div>
       <div className="flex items-center gap-2 px-5 py-2">
         <div className="relative h-8 w-8 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-600">
@@ -66,12 +67,14 @@ const BookPosts = (props: BookPostWithUser) => {
         </div>
 
         <div className="text-sm">
-          <p className="leading-none text-slate-700">
-            {user?.username ? user.username : user?.name}
-            <span className="text-xs">{` ⁘ ${dayjs(
-              book.createdAt
-            ).fromNow()}`}</span>
-          </p>
+          <Link href={`/@${user?.username ? user.username : user.id}`}>
+            <p className="leading-none text-slate-700">
+              {user?.username ? user.username : user?.name}
+              <span className="text-xs">{` ⁘ ${dayjs(
+                book.createdAt
+              ).fromNow()}`}</span>
+            </p>
+          </Link>
         </div>
       </div>
     </div>

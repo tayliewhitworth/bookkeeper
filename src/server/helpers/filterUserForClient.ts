@@ -5,6 +5,7 @@ export const filterUserForClient = (user: User) => {
     username: user.username,
     profileImageUrl: user.profileImageUrl,
     name: `${user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : 'unknown'}`,
-    externalUsername: user.externalAccounts.find((account) => account.provider === 'oauth_github')?.username || null,
+    externalUsername: user.externalAccounts.find((account) => account.username)?.username || null,
   };
 }
+

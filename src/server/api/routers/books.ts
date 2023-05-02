@@ -8,6 +8,16 @@ import {
 } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
+
+// create a new ratelimiter that allows 10 requests per minute
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(10, "1 m"),
+  analytics: true,
+});
+
 import { filterUserForClient } from "~/server/helpers/filterUserForClient";
 import type { Book } from "@prisma/client";
 
@@ -33,7 +43,7 @@ const addUserToBooks = async (books: Book[]) => {
       if (!user.externalUsername) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: `User has no Github Account: ${book.id}`,
+          message: `User has no External Username: ${book.id}`,
         });
       }
       user.username = user.externalUsername;
@@ -49,6 +59,18 @@ const addUserToBooks = async (books: Book[]) => {
 };
 
 export const booksRouter = createTRPCRouter({
+  getById: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const book = await ctx.prisma.book.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!book) throw new TRPCError({ code: "NOT_FOUND" });
+
+      return (await addUserToBooks([book]))[0];
+    }),
+
   getAll: publicProcedure.query(async ({ ctx }) => {
     const books = await ctx.prisma.book.findMany({
       take: 100,
@@ -57,6 +79,18 @@ export const booksRouter = createTRPCRouter({
 
     return addUserToBooks(books);
   }),
+
+  getBooksByUserId: publicProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(({ ctx, input }) =>
+      ctx.prisma.book
+        .findMany({
+          where: { userId: input.userId },
+          take: 100,
+          orderBy: [{ createdAt: "desc" }],
+        })
+        .then(addUserToBooks)
+    ),
 
   create: privateProcedure
     .input(
@@ -87,6 +121,9 @@ export const booksRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.userId;
+
+      const { success } = await ratelimit.limit(userId);
+      if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
 
       const book = await ctx.prisma.book.create({
         data: {

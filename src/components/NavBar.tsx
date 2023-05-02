@@ -8,7 +8,9 @@ import { useState } from "react";
 
 
 function Navbar() {
-  const { isSignedIn, isLoaded: userLoaded } = useUser();
+  const { isSignedIn, isLoaded: userLoaded, user } = useUser();
+
+  const username = user?.externalAccounts.find(account => account.username)?.username
 
   const [navbar, setNavbar] = useState(false);
 
@@ -83,7 +85,7 @@ function Navbar() {
                 {isSignedIn && (
                   <>
                     <li className="border-b-2 border-violet-500 py-3 text-center text-sm text-white hover:bg-violet-600  md:border-b-0  md:px-6  md:hover:bg-transparent md:hover:text-violet-600">
-                      <Link href="/books" onClick={() => setNavbar(!navbar)}>
+                      <Link href={`/@${username ? username : user.id}`} onClick={() => setNavbar(!navbar)}>
                         My Books
                       </Link>
                     </li>

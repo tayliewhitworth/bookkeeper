@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import type { StaticImageData } from "next/image";
 
+import { toast } from "react-hot-toast";
+
 // import { useForm } from "react-hook-form";
 
 import placeholder from "../assets/placeholder.svg";
@@ -55,8 +57,12 @@ const AddBook: NextPage = () => {
       router.push("/");
     },
     onError: (err) => {
-      const errorMessage = err?.data?.zodError?.fieldErrors;
-      console.log(errorMessage);
+      const errorMessage = err?.data?.zodError?.fieldErrors.content
+      if (errorMessage && errorMessage[0]) {
+        toast.error(errorMessage[0]);
+      } else {
+        toast.error("Something went wrong, please try again later");
+      }
     },
   });
 
