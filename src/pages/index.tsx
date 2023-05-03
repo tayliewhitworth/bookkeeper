@@ -34,6 +34,9 @@ const Home: NextPage = () => {
   return (
     <>
       <main className="min-h-screen flex-col items-center">
+        <div>
+          <h1 className="text-4xl font-bold text-center text-violet-300">Book Club</h1>
+        </div>
         <Feed />
       </main>
     </>
