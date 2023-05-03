@@ -2,6 +2,8 @@ import type { RouterOutputs } from "~/utils/api";
 import Image from "next/image";
 import Link from "next/link";
 
+import { useUser } from "@clerk/nextjs";
+
 import dayjs from "dayjs";
 
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -10,6 +12,7 @@ dayjs.extend(relativeTime);
 
 type BookPostWithUser = RouterOutputs["books"]["getAll"][number];
 const BookPosts = (props: BookPostWithUser) => {
+  const { isSignedIn } = useUser();
   const { book, user } = props;
   return (
     <div
@@ -35,11 +38,13 @@ const BookPosts = (props: BookPostWithUser) => {
         <p className="text-sm text-slate-700">
           {book.description.slice(0, 100)}...
         </p>
-        <div className="mt-2">
-          <button className="rounded bg-violet-500 p-1 text-xs font-medium text-slate-950 transition-colors hover:bg-violet-400">
-            + to wishlist
-          </button>
-        </div>
+        {isSignedIn && (
+          <div className="mt-2">
+            <button className="rounded bg-violet-500 p-1 text-xs font-medium text-slate-950 transition-colors hover:bg-violet-400">
+              + to wishlist
+            </button>
+          </div>
+        )}
       </div>
       <div className="flex items-center gap-2 px-5 py-2">
         <div className="relative h-8 w-8 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-600">

@@ -5,6 +5,8 @@ import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import Image from "next/image";
 import Link from "next/link";
 
+import { useUser } from "@clerk/nextjs";
+
 import dayjs from "dayjs";
 
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -14,6 +16,8 @@ dayjs.extend(relativeTime);
 const SingleBookPage: NextPage<{ id: string }> = ({ id }) => {
   const { data } = api.books.getById.useQuery({ id });
 
+  const { isSignedIn } = useUser();
+
   if (!data) return <div>Something went wrong...</div>;
 
   return (
@@ -22,29 +26,38 @@ const SingleBookPage: NextPage<{ id: string }> = ({ id }) => {
         <title>{data.book.title}</title>
       </Head>
       <div className="min-h-screenp-4 mx-auto my-4 max-w-3xl p-2">
-        <div className="flex items-center gap-4 p-4">
-          <div className="overflow-hidden rounded-full">
-            <Image
-              src={data.user.profileImageUrl}
-              width={50}
-              height={50}
-              alt={data.user.username ?? data.user.externalUsername}
-            />
-          </div>
-          <div>
-            <Link
-              href={`/@${
-                data.user?.username ? data.user.username : data.user.id
-              }`}
-            >
-              <p className="text-2xl font-bold text-violet-300">
-                @{data.user.username ?? data.user.externalUsername}
+        <div className="flex flex-col sm:flex-row items-center justify-between px-5">
+          <div className="flex items-center gap-4 p-4">
+            <div className="overflow-hidden rounded-full">
+              <Image
+                src={data.user.profileImageUrl}
+                width={50}
+                height={50}
+                alt={data.user.username ?? data.user.externalUsername}
+              />
+            </div>
+            <div>
+              <Link
+                href={`/@${
+                  data.user?.username ? data.user.username : data.user.id
+                }`}
+              >
+                <p className="text-2xl font-bold text-violet-300">
+                  @{data.user.username ?? data.user.externalUsername}
+                </p>
+              </Link>
+              <p className="text-slate-500">
+                posted {dayjs(data.book.createdAt).fromNow()}
               </p>
-            </Link>
-            <p className="text-slate-500">
-              posted {dayjs(data.book.createdAt).fromNow()}
-            </p>
+            </div>
           </div>
+          {isSignedIn && (
+            <div>
+              <button className="rounded bg-violet-500 p-1 text-sm font-medium text-slate-950 transition-colors hover:bg-violet-400">
+                + to wishlist
+              </button>
+            </div>
+          )}
         </div>
         <div className="flex flex-col justify-evenly gap-2 p-4 max-md:items-center md:flex-row">
           <div className="p-4">
@@ -56,7 +69,7 @@ const SingleBookPage: NextPage<{ id: string }> = ({ id }) => {
               className="rounded-lg shadow-lg shadow-slate-900"
             />
           </div>
-          <div className="flex flex-col items-start justify-evenly gap-4 text-gray-600">
+          <div className="flex flex-col items-start justify-evenly gap-4 text-slate-700">
             <div className="grid gap-3 rounded-lg bg-slate-200 p-4">
               <div>
                 <h1 className="text-4xl font-bold text-violet-400">
@@ -68,7 +81,7 @@ const SingleBookPage: NextPage<{ id: string }> = ({ id }) => {
                 <p className="max-w-sm text-lg">{data.book.description}</p>
               </div>
             </div>
-            <div className="flex items-center justify-center rounded-lg bg-slate-950 p-4 text-violet-300">
+            <div className="flex gap-2 items-center justify-center rounded-lg bg-slate-950 p-4 text-violet-300">
               <p>
                 Date Started:{" "}
                 {dayjs(data.book.dateStarted).format("MM/DD/YYYY")}
