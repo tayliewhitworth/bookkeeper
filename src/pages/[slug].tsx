@@ -43,12 +43,10 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
 
   if (!data) return <div>Something went wrong...</div>;
 
-  console.log(data)
-
   return (
     <>
       <Head>
-        <title>{data.username ?? data.externalUsername}</title>
+        <title>{data.username ?? data.externalUsername ?? data.name}</title>
       </Head>
       <main className="min-h-screen">
         <div className="m-4 flex flex-col items-center justify-center">
@@ -58,7 +56,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
           </div>
           <div>
             <p className="text-2xl font-bold text-violet-300">
-              @{data.username ?? data.externalUsername}
+              @{data.username ?? data.externalUsername ?? data.name}
             </p>
           </div>
         </div>

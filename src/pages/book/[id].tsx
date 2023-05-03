@@ -26,14 +26,18 @@ const SingleBookPage: NextPage<{ id: string }> = ({ id }) => {
         <title>{data.book.title}</title>
       </Head>
       <div className="min-h-screenp-4 mx-auto my-4 max-w-3xl p-2">
-        <div className="flex flex-col sm:flex-row items-center justify-between px-5">
+        <div className="flex flex-col items-center justify-between px-5 sm:flex-row">
           <div className="flex items-center gap-4 p-4">
             <div className="overflow-hidden rounded-full">
               <Image
                 src={data.user.profileImageUrl}
                 width={50}
                 height={50}
-                alt={data.user.username ?? data.user.externalUsername}
+                alt={
+                  data.user.username ??
+                  data.user.externalUsername ??
+                  data.user.name
+                }
               />
             </div>
             <div>
@@ -43,7 +47,10 @@ const SingleBookPage: NextPage<{ id: string }> = ({ id }) => {
                 }`}
               >
                 <p className="text-2xl font-bold text-violet-300">
-                  @{data.user.username ?? data.user.externalUsername}
+                  @
+                  {data.user.username ??
+                    data.user.externalUsername ??
+                    data.user.name}
                 </p>
               </Link>
               <p className="text-slate-500">
@@ -81,7 +88,7 @@ const SingleBookPage: NextPage<{ id: string }> = ({ id }) => {
                 <p className="max-w-sm text-lg">{data.book.description}</p>
               </div>
             </div>
-            <div className="flex gap-2 items-center justify-center rounded-lg bg-slate-950 p-4 text-violet-300">
+            <div className="flex items-center justify-center gap-2 rounded-lg bg-slate-950 p-4 text-violet-300">
               <p>
                 Date Started:{" "}
                 {dayjs(data.book.dateStarted).format("MM/DD/YYYY")}

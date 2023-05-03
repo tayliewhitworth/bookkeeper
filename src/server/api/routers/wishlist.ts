@@ -26,13 +26,16 @@ const addUserToWishlistItem = async (wishlistItems: WishlistItem[]) => {
       });
     }
     if (!user.username) {
-      if (!user.externalUsername) {
+      if (user.externalUsername) {
+        user.username = user.externalUsername;
+      } else if (user.name) {
+        user.username = user.name;
+      } else {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: `User has no External Username: ${wishlistItem.id}`,
+          message: `User for wishlistItem not found. POST ID: ${wishlistItem.id}, USER ID: ${wishlistItem.userId}`,
         });
       }
-      user.username = user.externalUsername;
     }
     return {
       wishlistItem,
@@ -134,7 +137,9 @@ export const wishlistRouter = createTRPCRouter({
       return updatedWishlistItem;
     }),
 
-    delete: privateProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
+  delete: privateProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
       const wishlistItemId = input.id;
       const userId = ctx.userId;
 

@@ -40,13 +40,16 @@ const addUserToBooks = async (books: Book[]) => {
       });
     }
     if (!user.username) {
-      if (!user.externalUsername) {
+      if (user.externalUsername) {
+        user.username = user.externalUsername;
+      } else if (user.name) {
+        user.username = user.name;
+      } else {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: `User has no External Username: ${book.id}`,
+          message: `User for book not found. POST ID: ${book.id}, USER ID: ${book.userId}`,
         });
       }
-      user.username = user.externalUsername;
     }
     return {
       book,
