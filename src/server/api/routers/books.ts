@@ -69,7 +69,7 @@ export const booksRouter = createTRPCRouter({
         where: { id: input.id },
       });
 
-      if (!book) throw new TRPCError({ code: "NOT_FOUND" });
+      if (!book) throw new TRPCError({ code: "NOT_FOUND", message: "Book not found" });
 
       return (await addUserToBooks([book]))[0];
     }),

@@ -72,7 +72,7 @@ const BookPosts = (props: BookPostWithUser) => {
         </div>
 
         <div className="text-sm">
-          <Link href={`/@${user?.username ? user.username : user.id}`}>
+          <Link href={`/@${user?.username ? user.username : user.name}`}>
             <p className="leading-none text-slate-700">
               {user?.username ? user.username : user?.name}
               <span className="text-xs">{` ⁘ ${dayjs(

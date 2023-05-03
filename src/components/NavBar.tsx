@@ -6,15 +6,19 @@ import logo from "../assets/bookLogo.png";
 
 import { useState } from "react";
 
-
 function Navbar() {
   const { isSignedIn, isLoaded: userLoaded, user } = useUser();
 
-  const username = user?.externalAccounts.find(account => account.username)?.username
+  const username = user?.externalAccounts.find(
+    (account) => account.username
+  )?.username;
+  const firstName = user && user.firstName ? user.firstName : "";
+  const lastName = user && user.lastName ? user.lastName : "";
 
   const [navbar, setNavbar] = useState(false);
 
-  if (!userLoaded) return <div className="p-3 w-full rounded-md bg-slate-950"></div>
+  if (!userLoaded)
+    return <div className="w-full rounded-md bg-slate-950 p-3"></div>;
 
   return (
     <div className="p-3">
@@ -22,7 +26,7 @@ function Navbar() {
         <div className="mx-auto justify-between px-4 md:flex md:items-center md:px-8 lg:max-w-7xl">
           <div>
             <div className="flex items-center justify-between py-3 md:block md:py-5">
-              <Link href="/" className="flex gap-1 items-center">
+              <Link href="/" className="flex items-center gap-1">
                 <span>
                   <Image src={logo} alt="Book Keeper" width={30} height={30} />
                 </span>
@@ -72,7 +76,7 @@ function Navbar() {
           </div>
           <div>
             <div
-              className={`mt-8 flex-1 justify-self-center transition-all pb-3 md:mt-0 md:block md:pb-0 ${
+              className={`mt-8 flex-1 justify-self-center pb-3 transition-all md:mt-0 md:block md:pb-0 ${
                 navbar ? "block p-12 md:p-0" : "hidden"
               }`}
             >
@@ -85,7 +89,12 @@ function Navbar() {
                 {isSignedIn && (
                   <>
                     <li className="border-b-2 border-violet-500 py-3 text-center text-sm text-white hover:bg-violet-600  md:border-b-0  md:px-6  md:hover:bg-transparent md:hover:text-violet-600">
-                      <Link href={`/@${username ? username : user.id}`} onClick={() => setNavbar(!navbar)}>
+                      <Link
+                        href={`/@${
+                          username ? username : `${firstName} ${lastName}`
+                        }`}
+                        onClick={() => setNavbar(!navbar)}
+                      >
                         My Books
                       </Link>
                     </li>

@@ -17,6 +17,22 @@ export const profileRouter = createTRPCRouter({
         const users = await clerkClient.users.getUserList({
           limit: 200,
         });
+
+        const nameParts = input.username.split(" ");
+        const firstName = nameParts[0];
+        const lastName =
+          nameParts.length > 1 ? nameParts[nameParts.length - 1] : "";
+
+        const matchedUser = users.find(
+          (user) =>
+            user.firstName?.toLowerCase() === firstName?.toLowerCase() &&
+            user.lastName?.toLowerCase() === lastName?.toLowerCase()
+        );
+
+        if (matchedUser) {
+          return filterUserForClient(matchedUser);
+        }
+
         const user = users.find((user) =>
           user.externalAccounts.find(
             (account) => account.username === input.username
@@ -25,7 +41,7 @@ export const profileRouter = createTRPCRouter({
         if (!user) {
           throw new TRPCError({
             code: "INTERNAL_SERVER_ERROR",
-            message: "User not found",
+            message: "User not found - profile router line 42",
           });
         }
         return filterUserForClient(user);
