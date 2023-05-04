@@ -109,7 +109,7 @@ function Navbar() {
                       </Link>
                     </li>
                     <li className="border-b-2 border-violet-500 px-6 py-3 text-center text-sm text-white  hover:bg-violet-600  md:border-b-0  md:hover:bg-transparent md:hover:text-violet-600">
-                      <Link href="/wishlist" onClick={() => setNavbar(!navbar)}>
+                      <Link href={`/wishlist/@${username ? username : `${firstName} ${lastName}`}`} onClick={() => setNavbar(!navbar)}>
                         Wishlist
                       </Link>
                     </li>

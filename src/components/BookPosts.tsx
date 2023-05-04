@@ -3,17 +3,40 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { useUser } from "@clerk/nextjs";
+import { api } from "~/utils/api";
 
 import dayjs from "dayjs";
 
 import relativeTime from "dayjs/plugin/relativeTime";
+import { LoadingSpinner } from "./loading";
 
 dayjs.extend(relativeTime);
 
 type BookPostWithUser = RouterOutputs["books"]["getAll"][number];
 const BookPosts = (props: BookPostWithUser) => {
-  const { isSignedIn } = useUser();
+  const { isSignedIn, user: clerkUser } = useUser();
   const { book, user } = props;
+
+  const { mutate, isLoading, isSuccess, isError } =
+    api.wishlistItem.create.useMutation();
+
+  const addToWishlist = () => {
+    mutate({
+      title: book.title,
+      author: book.author,
+      description: book.description,
+      link: `https://amazon.com/s?k=${book.title}+${book.author}`,
+    });
+  };
+
+  let errMsg = "";
+
+  if (isError) {
+    errMsg = "unable to add...";
+  }
+
+  const matchedUser = clerkUser?.id === user.id;
+
   return (
     <div
       key={book.id}
@@ -38,11 +61,24 @@ const BookPosts = (props: BookPostWithUser) => {
         <p className="text-sm text-slate-700">
           {book.description.slice(0, 100)}...
         </p>
-        {isSignedIn && (
+        {isSignedIn && !matchedUser && (
           <div className="mt-2">
-            <button className="rounded bg-violet-500 p-1 text-xs font-medium text-slate-950 transition-colors hover:bg-violet-400">
-              + to wishlist
+            <button
+              onClick={() => {
+                addToWishlist();
+              }}
+              disabled={isLoading || isSuccess}
+              className="rounded bg-violet-500 p-1 text-xs font-medium text-slate-950 transition-colors hover:bg-violet-400"
+            >
+              {isLoading ? (
+                <LoadingSpinner />
+              ) : isSuccess ? (
+                "Added!"
+              ) : (
+                "+ to wishlist"
+              )}
             </button>
+            <p className="text-xs text-red-500">{errMsg}</p>
           </div>
         )}
       </div>
