@@ -7,6 +7,7 @@ import BookPosts from "~/components/BookPosts";
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { LoadingSpinner } from "~/components/loading";
 
+
 const ProfileFeed = (props: { userId: string }) => {
   const { data, isLoading } = api.books.getBooksByUserId.useQuery({
     userId: props.userId,
@@ -49,7 +50,6 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
       </Head>
       <main className="min-h-screen">
         <div className="m-4 flex flex-col items-center justify-center">
-          {/* hello {data.username ?? data.externalUsername} */}
           <div className="overflow-hidden rounded-full">
             <Image
               src={data.profileImageUrl}

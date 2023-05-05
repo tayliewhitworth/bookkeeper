@@ -8,17 +8,37 @@ import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 
 import dayjs from "dayjs";
-
 import relativeTime from "dayjs/plugin/relativeTime";
+
+import { LoadingSpinner } from "~/components/loading";
+import { toast } from "react-hot-toast";
 
 dayjs.extend(relativeTime);
 
 const SingleBookPage: NextPage<{ id: string }> = ({ id }) => {
   const { data } = api.books.getById.useQuery({ id });
 
-  const { isSignedIn } = useUser();
+  const { isSignedIn, user } = useUser();
 
   if (!data) return <div>Something went wrong...</div>;
+
+  const { mutate, isLoading, isSuccess, isError } =
+    api.wishlistItem.create.useMutation();
+
+  const addToWishlist = () => {
+    mutate({
+      title: data.book.title,
+      author: data.book.author,
+      description: data.book.description,
+      link: `https://amazon.com/s?k=${data.book.title}+${data.book.author}`,
+    });
+  };
+
+  if (isError) {
+    toast.error("Unable to add to wishlist...");
+  }
+
+  const matchedUser = user?.id === data.user.id;
 
   return (
     <>
@@ -58,11 +78,28 @@ const SingleBookPage: NextPage<{ id: string }> = ({ id }) => {
               </p>
             </div>
           </div>
-          {isSignedIn && (
+          {isSignedIn && !matchedUser && (
             <div>
-              <button className="rounded bg-violet-500 p-1 text-sm font-medium text-slate-950 transition-colors hover:bg-violet-400">
-                + to wishlist
+              <button
+                onClick={addToWishlist}
+                disabled={isLoading || isSuccess}
+                className="rounded bg-violet-400 p-1 text-sm font-medium text-slate-950 transition-colors hover:bg-violet-400"
+              >
+                {isLoading ? (
+                  <LoadingSpinner />
+                ) : isSuccess ? (
+                  "Added!"
+                ) : (
+                  "+ to wishlist"
+                )}
               </button>
+            </div>
+          )}
+          {(isSignedIn && matchedUser) && (
+            <div className="rounded bg-violet-400 px-2 py-1 text-sm font-medium text-slate-950 transition-colors hover:bg-violet-400">
+              <Link href={`/book/${data.book.id}/edit`}>
+              Edit
+              </Link>
             </div>
           )}
         </div>

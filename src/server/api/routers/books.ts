@@ -69,7 +69,8 @@ export const booksRouter = createTRPCRouter({
         where: { id: input.id },
       });
 
-      if (!book) throw new TRPCError({ code: "NOT_FOUND", message: "Book not found" });
+      if (!book)
+        throw new TRPCError({ code: "NOT_FOUND", message: "Book not found" });
 
       return (await addUserToBooks([book]))[0];
     }),
@@ -136,5 +137,70 @@ export const booksRouter = createTRPCRouter({
       });
 
       return book;
+    }),
+
+  update: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        title: z.string().min(1).max(255),
+        author: z.string().min(1).max(255),
+        description: z.string().max(255),
+        dateStarted: z.string().datetime(),
+        dateFinished: z.string().datetime(),
+        genre: z.string().min(1).max(255),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const bookId = input.id;
+      const userId = ctx.userId;
+
+      const book = await ctx.prisma.book.findUnique({
+        where: { id: bookId },
+      });
+
+      if (!book) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Book not found" });
+      }
+
+      if (book.userId !== userId) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You are not allowed to update this book",
+        });
+      }
+
+      const updatedBook = await ctx.prisma.book.update({
+        where: { id: bookId },
+        data: { ...input },
+      });
+      return updatedBook;
+    }),
+
+  delete: privateProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const bookId = input.id;
+      const userId = ctx.userId;
+
+      const book = await ctx.prisma.book.findUnique({
+        where: { id: bookId },
+      });
+
+      if (!book) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Book not found" });
+      }
+
+      if (book.userId !== userId) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You are not allowed to delete this book",
+        });
+      }
+
+      const deletedBook = await ctx.prisma.book.delete({
+        where: { id: bookId },
+      });
+      return deletedBook;
     }),
 });
