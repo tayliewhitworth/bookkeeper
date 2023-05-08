@@ -41,15 +41,17 @@ const Feed = () => {
       <div className="m-auto grid place-content-center gap-4 p-5">
         {filteredData?.map((user) => (
           <div key={user.id} className="flex items-center gap-2">
-            <div className="overflow-hidden rounded-full">
-              <Image
-                src={user.profileImageUrl}
-                alt={user.name}
-                width={50}
-                height={50}
-              />
-            </div>
-            <div>
+            <Link href={`/@${user.externalUsername ?? user.name}`}>
+              <div className="overflow-hidden rounded-full transition-shadow hover:shadow-md hover:shadow-violet-300">
+                <Image
+                  src={user.profileImageUrl}
+                  alt={user.name}
+                  width={50}
+                  height={50}
+                />
+              </div>
+            </Link>
+            <div className="transition-colors hover:text-violet-400">
               <Link href={`/@${user.externalUsername ?? user.name}`}>
                 <p>{user.externalUsername ?? user.name}</p>
               </Link>

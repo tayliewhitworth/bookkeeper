@@ -4,6 +4,8 @@ import Head from "next/head";
 import { api } from "~/utils/api";
 import { useRouter } from "next/navigation";
 
+import DeleteBtn from "~/components/DeleteBtn";
+
 import { useState } from "react";
 
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
@@ -131,9 +133,9 @@ const EditBook: NextPage<{ id: string }> = ({ id }) => {
                   </label>
                   <input
                     type="datetime-local"
-                    defaultValue={data.book.dateStarted
-                      .toISOString()
-                      .slice(0, 16)}
+                    defaultValue={dayjs(data.book.dateStarted).format(
+                      "YYYY-MM-DDTHH:mm"
+                    )}
                     {...register("dateStarted")}
                     className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 text-sm text-white placeholder-gray-400"
                   />
@@ -150,9 +152,9 @@ const EditBook: NextPage<{ id: string }> = ({ id }) => {
 
                   <input
                     type="datetime-local"
-                    defaultValue={data.book.dateFinished
-                      .toISOString()
-                      .slice(0, 16)}
+                    defaultValue={dayjs(data.book.dateFinished).format(
+                      "YYYY-MM-DDTHH:mm"
+                    )}
                     {...register("dateFinished")}
                     className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 text-sm text-white placeholder-gray-400"
                   />
@@ -167,10 +169,14 @@ const EditBook: NextPage<{ id: string }> = ({ id }) => {
                   </label>
                   <textarea
                     defaultValue={data.book.description}
+                    maxLength={255}
                     {...register("description", { required: true })}
                     className="focus:ring-primary-500 focus:border-primary-500 block h-36 w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 text-sm text-white placeholder-gray-400"
                   />
                   {errors.description && <span>This field is required</span>}
+                  <div className=" pt-2 text-xs">
+                    {data.book.description.length}/255 characters
+                  </div>
                 </div>
               </div>
 
@@ -244,12 +250,11 @@ const EditBook: NextPage<{ id: string }> = ({ id }) => {
                   )}
                 </button>
 
-                {/* <button
-                  type="button"
-                  className="mt-4 inline-flex items-center rounded-lg bg-red-600 px-5 py-2.5 text-center text-sm font-medium text-slate-200 hover:bg-red-800 focus:ring-4 focus:ring-violet-500 sm:mt-6"
-                >
-                  Delete Book
-                </button> */}
+                <div className="mt-4 inline-flex items-center sm:mt-6">
+
+                <DeleteBtn id={data.book.id} />
+                </div>
+              
               </div>
             </form>
           </div>

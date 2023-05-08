@@ -260,10 +260,12 @@ const AddBook: NextPage = () => {
                       id="description"
                       rows={8}
                       value={description}
+                      maxLength={255}
                       onChange={(e) => setDescription(e.target.value)}
                       className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 text-sm text-white placeholder-gray-400"
                       placeholder="Your description here"
                     ></textarea>
+                    <div className="text-xs">{description.length}/255</div>
                   </div>
                 </div>
 
