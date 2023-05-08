@@ -11,10 +11,10 @@ import { TRPCError } from "@trpc/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 
-// create a new ratelimiter that allows 10 requests per minute
+// create a new ratelimiter that allows 5 requests per minute
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(10, "1 m"),
+  limiter: Ratelimit.slidingWindow(5, "1 m"),
   analytics: true,
 });
 
@@ -169,6 +169,9 @@ export const booksRouter = createTRPCRouter({
           message: "You are not allowed to update this book",
         });
       }
+
+      const { success } = await ratelimit.limit(userId);
+      if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
 
       const updatedBook = await ctx.prisma.book.update({
         where: { id: bookId },

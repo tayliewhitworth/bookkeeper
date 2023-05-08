@@ -170,12 +170,13 @@ const EditBook: NextPage<{ id: string }> = ({ id }) => {
                   <textarea
                     defaultValue={data.book.description}
                     maxLength={255}
+                    rows={5}
                     {...register("description", { required: true })}
-                    className="focus:ring-primary-500 focus:border-primary-500 block h-36 w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 text-sm text-white placeholder-gray-400"
+                    className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 text-sm text-white placeholder-gray-400"
                   />
                   {errors.description && <span>This field is required</span>}
-                  <div className=" pt-2 text-xs">
-                    {data.book.description.length}/255 characters
+                  <div className="pt-2 text-xs">
+                    {data.book.description.length}/255
                   </div>
                 </div>
               </div>
@@ -251,10 +252,8 @@ const EditBook: NextPage<{ id: string }> = ({ id }) => {
                 </button>
 
                 <div className="mt-4 inline-flex items-center sm:mt-6">
-
-                <DeleteBtn id={data.book.id} />
+                  <DeleteBtn id={data.book.id} />
                 </div>
-              
               </div>
             </form>
           </div>

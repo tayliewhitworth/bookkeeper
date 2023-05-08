@@ -55,7 +55,9 @@ const BookPosts = (props: BookPostWithUser) => {
       />
       <div className="px-5 py-4">
         <div className="mb-2 text-xl font-bold text-violet-300">
-          <Link href={`/book/${book.id}`}>{book.title}</Link>
+          <Link title="Book Info" href={`/book/${book.id}`}>
+            {book.title}
+          </Link>
         </div>
 
         <p className="text-sm text-slate-700">
@@ -67,6 +69,7 @@ const BookPosts = (props: BookPostWithUser) => {
               onClick={() => {
                 addToWishlist();
               }}
+              title="Add to wishlist"
               disabled={isLoading || isSuccess}
               className="rounded bg-violet-500 p-1 text-xs font-medium text-slate-950 transition-colors hover:bg-violet-400"
             >
@@ -83,7 +86,10 @@ const BookPosts = (props: BookPostWithUser) => {
         )}
       </div>
       <div className="flex items-center gap-2 px-5 py-2">
-        <Link href={`/@${user?.username ? user.username : user.name}`}>
+        <Link
+          title={`@${user.externalUsername ?? user.name}'s profile`}
+          href={`/@${user?.username ? user.username : user.name}`}
+        >
           <div className="relative h-8 w-8 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-600">
             {user?.profileImageUrl ? (
               <Image
@@ -110,7 +116,10 @@ const BookPosts = (props: BookPostWithUser) => {
         </Link>
 
         <div className="text-sm">
-          <Link href={`/@${user?.username ? user.username : user.name}`}>
+          <Link
+            title={`@${user.externalUsername ?? user.name}'s profile`}
+            href={`/@${user?.username ? user.username : user.name}`}
+          >
             <p className="leading-none text-slate-700">
               {user?.username ? user.username : user?.name}
               <span className="text-xs">{` ⁘ ${dayjs(

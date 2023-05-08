@@ -1,6 +1,6 @@
 import type { NextPage, GetStaticProps } from "next";
 import Head from "next/head";
-import WishistItem from "~/components/WishlistItem";
+import { WishistItem, AddWishlistItem } from "~/components/WishlistItem";
 
 import { api } from "~/utils/api";
 
@@ -23,6 +23,12 @@ const WishlistItems = (props: { userId: string }) => {
 
   return (
     <>
+      <div className="flex gap-2 items-center justify-between text-3xl font-bold text-violet-300 mb-3 px-4">
+        <h1>Wishlist</h1>
+        <div className="justify-self-end font-normal">
+          <AddWishlistItem />
+        </div>
+      </div>
       <div className="grid gap-4">
         {data.map((wishlistItem) => (
           <WishistItem key={wishlistItem.wishlistItem.id} {...wishlistItem} />
@@ -45,9 +51,9 @@ const Wishlist: NextPage<{ username: string }> = ({ username }) => {
         </title>
       </Head>
       <div className="mx-auto my-4 flex min-h-screen max-w-2xl flex-col gap-2 p-2">
-      <div className="flex items-center justify-center text-3xl font-bold text-violet-300">
-            <h1>Wishlist</h1>
-        </div>
+        {/* <div className="flex items-center justify-center text-3xl font-bold text-violet-300">
+          <h1>Wishlist</h1>
+        </div> */}
         <WishlistItems userId={data.id} />
       </div>
     </>

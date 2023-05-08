@@ -7,6 +7,16 @@ import { TRPCError } from "@trpc/server";
 import type { WishlistItem } from "@prisma/client";
 import { filterUserForClient } from "~/server/helpers/filterUserForClient";
 
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
+
+// create a new ratelimiter that allows 5 requests per minute
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(5, "1 m"),
+  analytics: true,
+});
+
 const addUserToWishlistItem = async (wishlistItems: WishlistItem[]) => {
   const userId = wishlistItems.map((wishlistItem) => wishlistItem.userId);
   const users = (
@@ -90,6 +100,9 @@ export const wishlistRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.userId;
 
+      const { success } = await ratelimit.limit(userId);
+      if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
+
       const wishlistItem = await ctx.prisma.wishlistItem.create({
         data: {
           ...input,
@@ -129,6 +142,9 @@ export const wishlistRouter = createTRPCRouter({
           message: "You are not allowed to update this wishlist item",
         });
       }
+
+      const { success } = await ratelimit.limit(userId);
+      if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
 
       const updatedWishlistItem = await ctx.prisma.wishlistItem.update({
         where: { id: wishlistItemId },
