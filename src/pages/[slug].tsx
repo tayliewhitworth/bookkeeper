@@ -47,7 +47,7 @@ const ProfileBio = (props: { userId: string }) => {
   return (
     <div className="flex flex-col gap-3">
       <p className="text-slate-500">{data.profile.bio}</p>
-      <div className="flex items-center justify-center gap-2">
+      <div className="flex items-center justify-center gap-2 flex-wrap">
         {tags.map((tag, index) => (
           <div
             className={`rounded-lg px-2 py-0.5 text-xs ${

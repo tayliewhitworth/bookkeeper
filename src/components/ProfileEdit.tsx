@@ -11,11 +11,28 @@ export const UpdateProfile = (props: { userId: string }) => {
   });
 
   const [showModal, setShowModal] = useState(false);
-  const [showInfo, setShowInfo] = useState(false);
 
   const [bio, setBio] = useState(data?.profile.bio);
-  const [tags, setTags] = useState(data?.profile.tags);
+  const [tags, setTags] = useState<string[] | undefined>(
+    data?.profile.tags.split(",")
+  );
   const ctx = api.useContext();
+
+  const genreOptions = [
+    "Action🏃",
+    "Romance💓",
+    "Comedy😂",
+    "Business🤔",
+    "Self-Improvement👍",
+    "Fantasy🧙",
+    "Sci-Fi🚀",
+    "Horror👻",
+    "Thriller😎",
+    "Mystery🔍",
+    "Historical👵",
+    "Non-Fiction😏",
+    "Biography🤩",
+  ];
 
   if (!data || data.profile === null) {
     return <div>No profile to edit</div>;
@@ -36,11 +53,14 @@ export const UpdateProfile = (props: { userId: string }) => {
     },
   });
 
+  const tagsString = tags?.filter(tag => tag.trim() !== '').join(',') ?? '';
+
+
   const updateProfile = () => {
     mutate({
       id: data.profile.id,
       bio: bio ?? "",
-      tags: tags ?? "",
+      tags: tagsString,
     });
   };
 
@@ -100,67 +120,30 @@ export const UpdateProfile = (props: { userId: string }) => {
               <div className="mb-4 grid gap-4 sm:grid-cols-2">
                 <div className="flex flex-col items-start">
                   <label
-                    htmlFor="name"
+                    htmlFor="tags"
                     className="mb-2 block text-sm font-medium text-white"
                   >
                     Favorite Genres
                   </label>
-                  <input
-                    type="text"
-                    name="name"
-                    id="name"
-                    value={tags}
-                    maxLength={200}
-                    onChange={(e) => setTags(e.target.value)}
-                    className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-600 bg-gray-700  p-2.5 text-sm text-white placeholder-gray-400"
-                  />
-                  <div className="mt-4">
-                    <p className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                      Seperate tags by commas{" "}
-                      <button
-                        data-popover-target="popover-description"
-                        data-popover-placement="bottom-end"
-                        type="button"
-                        title="Generate Image Info"
-                        onClick={() => setShowInfo(!showInfo)}
-                      >
-                        <svg
-                          className="ml-2 h-4 w-4 text-gray-400 hover:text-gray-500"
-                          aria-hidden="true"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
-                            clipRule="evenodd"
-                          ></path>
-                        </svg>
-                        <span className="sr-only">Show information</span>
-                      </button>
-                    </p>
-                    <div
-                      data-popover
-                      id="popover-description"
-                      role="tooltip"
-                      className={`absolute z-10 inline-block w-72 rounded-lg border border-gray-200 bg-white text-sm text-gray-500 shadow-sm transition-opacity duration-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 ${
-                        showInfo ? "visible opacity-100" : "invisible opacity-0"
-                      }`}
-                    >
-                      <div className="space-y-2 p-3">
-                        <h3 className="font-semibold text-gray-900 dark:text-white">
-                          What does this mean?
-                        </h3>
-                        <p>
-                          When entering your favorite genres, please seperate
-                          each genre by a comma. For example, if you like
-                          romance and fiction, you would enter
-                          &quot;romance,fiction&quot; in the input field.
-                        </p>
-                      </div>
-                      <div data-popper-arrow></div>
-                    </div>
+                  <div className="grid grid-cols-2 place-items-start items-center gap-4 text-xs">
+                    {genreOptions.map((genre) => (
+                      <label key={genre} className="flex items-center gap-1">
+                        <input
+                          type="checkbox"
+                          name={genre}
+                          checked={tags?.includes(genre)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setTags([...(tags ?? "other"), genre]);
+                            } else {
+                              setTags(tags?.filter((tag) => tag !== genre));
+                            }
+                          }}
+                          className="focus:ring-primary-500 focus:border-primary-500 block rounded-lg border border-gray-600 bg-gray-700 text-white"
+                        />
+                        <span className="text-white">{genre}</span>
+                      </label>
+                    ))}
                   </div>
                 </div>
 
@@ -203,10 +186,25 @@ export const UpdateProfile = (props: { userId: string }) => {
 
 export const CreateProfile = () => {
   const [showModal, setShowModal] = useState(false);
-  const [showInfo, setShowInfo] = useState(false);
 
   const [bio, setBio] = useState("");
-  const [tags, setTags] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+
+  const genreOptions = [
+    "Action🏃",
+    "Romance💓",
+    "Comedy😂",
+    "Business🤔",
+    "Self-Improvement👍",
+    "Fantasy🧙",
+    "Sci-Fi🚀",
+    "Horror👻",
+    "Thriller😎",
+    "Mystery🔍",
+    "Historical👵",
+    "Non-Fiction😏",
+    "Biography🤩",
+  ];
 
   const ctx = api.useContext();
 
@@ -214,7 +212,7 @@ export const CreateProfile = () => {
     onSuccess: () => {
       setShowModal(false);
       setBio("");
-      setTags("");
+      setTags([]);
       void ctx.profile.getProfileByUserId.invalidate();
     },
     onError: () => {
@@ -283,66 +281,29 @@ export const CreateProfile = () => {
                   >
                     Favorite Genres
                   </label>
-                  <input
-                    type="text"
-                    name="name"
-                    id="name"
-                    value={tags}
-                    onChange={(e) => setTags(e.target.value)}
-                    className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-600 bg-gray-700  p-2.5 text-sm text-white placeholder-gray-400"
-                    placeholder="romance,fiction,etc."
-                  />
-                  <div className="mt-4">
-                    <p className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                      Seperate tags by commas{" "}
-                      <button
-                        data-popover-target="popover-description"
-                        data-popover-placement="bottom-end"
-                        type="button"
-                        title="Generate Image Info"
-                        onClick={() => setShowInfo(!showInfo)}
-                      >
-                        <svg
-                          className="ml-2 h-4 w-4 text-gray-400 hover:text-gray-500"
-                          aria-hidden="true"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
-                            clipRule="evenodd"
-                          ></path>
-                        </svg>
-                        <span className="sr-only">Show information</span>
-                      </button>
-                    </p>
-                    <div
-                      data-popover
-                      id="popover-description"
-                      role="tooltip"
-                      className={`absolute z-10 inline-block w-72 rounded-lg border border-gray-200 bg-white text-sm text-gray-500 shadow-sm transition-opacity duration-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 ${
-                        showInfo ? "visible opacity-100" : "invisible opacity-0"
-                      }`}
-                    >
-                      <div className="space-y-2 p-3">
-                        <h3 className="font-semibold text-gray-900 dark:text-white">
-                          What does this mean?
-                        </h3>
-                        <p>
-                          When entering your favorite genres, please seperate
-                          each genre by a comma. For example, if you like
-                          romance and fiction, you would enter
-                          &quot;romance,fiction&quot; in the input field.
-                        </p>
-                      </div>
-                      <div data-popper-arrow></div>
-                    </div>
+                  <div className="grid grid-cols-2 place-items-start items-center gap-4 text-xs">
+                    {genreOptions.map((genre) => (
+                      <label key={genre} className="flex items-center gap-1">
+                        <input
+                          type="checkbox"
+                          name={genre}
+                          checked={tags.includes(genre)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setTags([...tags, genre]);
+                            } else {
+                              setTags(tags?.filter((tag) => tag !== genre));
+                            }
+                          }}
+                          className="focus:ring-primary-500 focus:border-primary-500 block rounded-lg border border-gray-600 bg-gray-700 text-white"
+                        />
+                        <span className="text-white">{genre}</span>
+                      </label>
+                    ))}
                   </div>
                 </div>
 
-                <div className="sm:col-span-2 flex flex-col items-start">
+                <div className="flex flex-col items-start sm:col-span-2">
                   <label
                     htmlFor="description"
                     className="mb-2 block text-sm font-medium text-white"
@@ -369,7 +330,7 @@ export const CreateProfile = () => {
                     e.preventDefault();
                     mutate({
                       bio,
-                      tags,
+                      tags: tags.join(","),
                     });
                   }}
                   type="submit"
