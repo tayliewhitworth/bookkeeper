@@ -96,14 +96,7 @@ const SingleBookPage: NextPage<{ id: string }> = ({ id }) => {
               </button>
             </div>
           )}
-          {(isSignedIn && matchedUser) && (
-            // <div className="rounded bg-violet-400 px-2 py-1 text-sm font-medium text-slate-950 transition-colors hover:bg-violet-400">
-            //   <Link href={`/book/${data.book.id}/edit`}>
-            //   Edit
-            //   </Link>
-            // </div>
-            <UpdateBook id={data.book.id} />
-          )}
+          {isSignedIn && matchedUser && <UpdateBook id={data.book.id} />}
         </div>
         <div className="flex flex-col justify-evenly gap-2 p-4 max-md:items-center md:flex-row">
           <div className="p-4">

@@ -36,3 +36,12 @@ model WishlistItem {
     userId    String
     @@index([userId])
 }
+
+model Profile {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    bio     String     @db.VarChar(255)
+    tags    String     @db.VarChar(255)    
+    userId    String
+    @@index([userId])
+}

@@ -6,7 +6,62 @@ import BookPosts from "~/components/BookPosts";
 
 import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { LoadingSpinner } from "~/components/loading";
+import { useUser } from "@clerk/nextjs";
 
+const ProfileBio = (props: { userId: string }) => {
+  const { data, isLoading } = api.profile.getProfileByUserId.useQuery({
+    userId: props.userId,
+  });
+
+  const { user } = useUser();
+
+  if (isLoading)
+    return (
+      <div>
+        <LoadingSpinner />
+      </div>
+    );
+
+  if (!data || data.profile === null)
+    return (
+      <div className="text-slate-500">
+        <p>No Bio</p>
+        {user?.id === props.userId && (
+          <p>Click the edit button to add a bio!</p>
+        )}
+      </div>
+    );
+
+  const colors = [
+    "bg-violet-500",
+    "bg-purple-500",
+    "bg-violet-700",
+    "bg-blue-500",
+    "bg-indigo-500",
+    "bg-purple-500",
+    "bg-pink-500",
+  ];
+
+  const tags = data.profile.tags.split(",");
+
+  return (
+    <div className="flex flex-col gap-3">
+      <p className="text-slate-500">{data.profile.bio}</p>
+      <div className="flex items-center justify-center gap-2">
+        {tags.map((tag, index) => (
+          <div
+            className={`rounded-lg px-2 py-0.5 text-xs ${
+              colors[index % colors.length] ?? "bg-violet-500"
+            }`}
+            key={index}
+          >
+            {tag}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const ProfileFeed = (props: { userId: string }) => {
   const { data, isLoading } = api.books.getBooksByUserId.useQuery({
@@ -49,7 +104,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
         <title>{data.username ?? data.externalUsername ?? data.name}</title>
       </Head>
       <main className="min-h-screen">
-        <div className="m-4 flex flex-col items-center justify-center">
+        <div className="m-4 flex flex-col items-center justify-center  rounded bg-slate-950 p-4">
           <div className="overflow-hidden rounded-full">
             <Image
               src={data.profileImageUrl}
@@ -62,6 +117,9 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
             <p className="text-2xl font-bold text-violet-300">
               @{data.username ?? data.externalUsername ?? data.name}
             </p>
+          </div>
+          <div className="p-4 text-center">
+            <ProfileBio userId={data.id} />
           </div>
         </div>
 
