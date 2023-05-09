@@ -8,6 +8,8 @@ import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { LoadingSpinner } from "~/components/loading";
 import { useUser } from "@clerk/nextjs";
 
+import { UpdateProfile, CreateProfile } from "~/components/ProfileEdit";
+
 const ProfileBio = (props: { userId: string }) => {
   const { data, isLoading } = api.profile.getProfileByUserId.useQuery({
     userId: props.userId,
@@ -26,9 +28,7 @@ const ProfileBio = (props: { userId: string }) => {
     return (
       <div className="text-slate-500">
         <p>No Bio</p>
-        {user?.id === props.userId && (
-          <p>Click the edit button to add a bio!</p>
-        )}
+        {user?.id === props.userId && <CreateProfile />}
       </div>
     );
 
@@ -58,6 +58,9 @@ const ProfileBio = (props: { userId: string }) => {
             {tag}
           </div>
         ))}
+      </div>
+      <div>
+        {user?.id === props.userId && <UpdateProfile userId={props.userId} />}
       </div>
     </div>
   );

@@ -135,4 +135,31 @@ export const profileRouter = createTRPCRouter({
 
       return profile;
     }),
+  
+  update: privateProcedure.input(z.object({
+    id: z.string(),
+    bio: z.string().max(255, { message: "Bio must be less than 255 characters" }),
+    tags: z.string(),
+  })).mutation(async ({ ctx, input }) => {
+    const profileId = input.id;
+    const userId = ctx.userId;
+
+    const profile = await ctx.prisma.profile.findUnique({
+      where: { id: profileId },
+    })
+
+    if (!profile) {
+      throw new TRPCError({ code: "NOT_FOUND", message: "Profile not found" })
+    }
+
+    if (profile.userId !== userId) {
+      throw new TRPCError({ code: "UNAUTHORIZED", message: "You are not authorized to update this profile" })
+    }
+
+    const updatedProfile = await ctx.prisma.profile.update({
+      where: { id: profileId },
+      data: { ...input }
+    })
+    return updatedProfile
+  }),
 });
