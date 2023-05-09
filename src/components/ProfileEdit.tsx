@@ -53,8 +53,9 @@ export const UpdateProfile = (props: { userId: string }) => {
     },
   });
 
-  const tagsString = tags?.filter(tag => tag.trim() !== '').join(',') ?? '';
+  const tagsString = tags?.filter((tag) => tag.trim() !== "").join(",") ?? "";
 
+  const canSave = [bio, tagsString].every(Boolean) || !isLoading;
 
   const updateProfile = () => {
     mutate({
@@ -66,7 +67,7 @@ export const UpdateProfile = (props: { userId: string }) => {
 
   return (
     <div>
-      <div className="flex justify-center">
+      <div className="flex justify-center pt-3">
         <button
           id="updateProductButton"
           data-modal-toggle="updateProductModal"
@@ -169,7 +170,11 @@ export const UpdateProfile = (props: { userId: string }) => {
               </div>
               <div className="flex items-center space-x-4">
                 <button
-                  onClick={updateProfile}
+                  disabled={!canSave}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    updateProfile();
+                  }}
                   type="submit"
                   className="rounded-lg bg-violet-400 px-5 py-2.5 text-center text-sm font-medium text-slate-950 hover:bg-violet-600 focus:outline-none focus:ring-4 focus:ring-violet-300"
                 >
@@ -220,6 +225,8 @@ export const CreateProfile = () => {
     },
   });
 
+  const canSave = [bio, tags.length].every(Boolean) || !isLoading;
+
   return (
     <div>
       <div className="flex justify-center pt-2">
@@ -228,7 +235,7 @@ export const CreateProfile = () => {
           data-modal-toggle="updateProductModal"
           className="rounded bg-violet-500 p-1 text-center text-sm font-medium text-white focus:outline-none focus:ring-4 focus:ring-violet-400"
           type="button"
-          title="Add Wishlist Item"
+          title="Create Profile Bio"
           onClick={() => setShowModal(true)}
         >
           Add Bio
@@ -326,6 +333,7 @@ export const CreateProfile = () => {
               </div>
               <div className="flex items-center space-x-4">
                 <button
+                  disabled={!canSave}
                   onClick={(e) => {
                     e.preventDefault();
                     mutate({
