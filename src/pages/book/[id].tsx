@@ -61,6 +61,7 @@ const SingleBookPage: NextPage<{ id: string }> = ({ id }) => {
                   data.user.externalUsername ??
                   data.user.name
                 }
+                className="object-cover h-[50px] w-[50px]"
               />
             </div>
             <div>

@@ -114,6 +114,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
               width={50}
               height={50}
               alt="profile pic"
+              className="object-cover h-[50px] w-[50px]"
             />
           </div>
           <div>

@@ -5,7 +5,7 @@ import Image from "next/image";
 
 import { api } from "~/utils/api";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 
 const Feed = () => {
@@ -13,19 +13,26 @@ const Feed = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredData = data?.filter((user) => {
-    if (searchTerm.trim() === "") {
-      return true;
-    } else if (user.username) {
-      return user.username.toLowerCase().includes(searchTerm.toLowerCase());
-    } else if (user.externalUsername) {
-      return user.externalUsername
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
-    } else {
-      return user.name.toLowerCase().includes(searchTerm.toLowerCase());
+  // future me: this will help when adding search by category
+  const filteredData = useMemo(() => {
+    if (!data) {
+      return []
     }
-  });
+
+    return data.filter((user) => {
+      if (searchTerm.trim() === "") {
+        return true;
+      } else if (user.username) {
+        return user.username.toLowerCase().includes(searchTerm.toLowerCase());
+      } else if (user.externalUsername) {
+        return user.externalUsername
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
+      } else {
+        return user.name.toLowerCase().includes(searchTerm.toLowerCase());
+      }
+    });
+  }, [data, searchTerm]);
 
   return (
     <>
@@ -48,6 +55,7 @@ const Feed = () => {
                   alt={user.name}
                   width={50}
                   height={50}
+                  className="object-cover h-[50px] w-[50px]"
                 />
               </div>
             </Link>
