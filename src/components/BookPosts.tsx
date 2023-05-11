@@ -83,7 +83,7 @@ const BookPosts = (props: BookPostWithUser) => {
               )}
             </button>
           )}
-          <LikeBtn id={book.id} />
+          {isSignedIn && <LikeBtn id={book.id} />}
         </div>
       </div>
       <div className="flex items-center gap-2 px-5 py-2">

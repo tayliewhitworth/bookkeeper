@@ -81,27 +81,29 @@ const SingleBookPage: NextPage<{ id: string }> = ({ id }) => {
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            {isSignedIn && !matchedUser && (
-              <div>
-                <button
-                  onClick={addToWishlist}
-                  disabled={isLoading || isSuccess}
-                  className="rounded bg-violet-400 p-1 text-sm font-medium text-slate-950 transition-colors hover:bg-violet-400"
-                >
-                  {isLoading ? (
-                    <LoadingSpinner />
-                  ) : isSuccess ? (
-                    "Added!"
-                  ) : (
-                    "+ to wishlist"
-                  )}
-                </button>
-              </div>
-            )}
-            {isSignedIn && matchedUser && <UpdateBook id={data.book.id} />}
-            <LikeBtn id={data.book.id} />
-          </div>
+          {isSignedIn && (
+            <div className="flex items-center gap-4">
+              {!matchedUser && (
+                <div>
+                  <button
+                    onClick={addToWishlist}
+                    disabled={isLoading || isSuccess}
+                    className="rounded bg-violet-400 p-1 text-sm font-medium text-slate-950 transition-colors hover:bg-violet-400"
+                  >
+                    {isLoading ? (
+                      <LoadingSpinner />
+                    ) : isSuccess ? (
+                      "Added!"
+                    ) : (
+                      "+ to wishlist"
+                    )}
+                  </button>
+                </div>
+              )}
+              {matchedUser && <UpdateBook id={data.book.id} />}
+              <LikeBtn id={data.book.id} />
+            </div>
+          )}
         </div>
         <div className="flex flex-col justify-evenly gap-2 p-4 max-md:items-center md:flex-row">
           <div className="p-4">
