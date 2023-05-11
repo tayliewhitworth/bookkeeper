@@ -14,6 +14,8 @@ import { LoadingSpinner } from "~/components/loading";
 import { toast } from "react-hot-toast";
 import UpdateBook from "~/components/UpdateBookForm";
 
+import { LikeBtn } from "~/components/LikeBtn";
+
 dayjs.extend(relativeTime);
 
 const SingleBookPage: NextPage<{ id: string }> = ({ id }) => {
@@ -79,24 +81,27 @@ const SingleBookPage: NextPage<{ id: string }> = ({ id }) => {
               </p>
             </div>
           </div>
-          {isSignedIn && !matchedUser && (
-            <div>
-              <button
-                onClick={addToWishlist}
-                disabled={isLoading || isSuccess}
-                className="rounded bg-violet-400 p-1 text-sm font-medium text-slate-950 transition-colors hover:bg-violet-400"
-              >
-                {isLoading ? (
-                  <LoadingSpinner />
-                ) : isSuccess ? (
-                  "Added!"
-                ) : (
-                  "+ to wishlist"
-                )}
-              </button>
-            </div>
-          )}
-          {isSignedIn && matchedUser && <UpdateBook id={data.book.id} />}
+          <div className="flex items-center gap-4">
+            {isSignedIn && !matchedUser && (
+              <div>
+                <button
+                  onClick={addToWishlist}
+                  disabled={isLoading || isSuccess}
+                  className="rounded bg-violet-400 p-1 text-sm font-medium text-slate-950 transition-colors hover:bg-violet-400"
+                >
+                  {isLoading ? (
+                    <LoadingSpinner />
+                  ) : isSuccess ? (
+                    "Added!"
+                  ) : (
+                    "+ to wishlist"
+                  )}
+                </button>
+              </div>
+            )}
+            {isSignedIn && matchedUser && <UpdateBook id={data.book.id} />}
+            <LikeBtn id={data.book.id} />
+          </div>
         </div>
         <div className="flex flex-col justify-evenly gap-2 p-4 max-md:items-center md:flex-row">
           <div className="p-4">

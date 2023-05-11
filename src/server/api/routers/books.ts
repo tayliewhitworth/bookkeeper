@@ -96,6 +96,22 @@ export const booksRouter = createTRPCRouter({
         .then(addUserToBooks)
     ),
 
+    getBookWithLikes: publicProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
+      const booksWithLikes = await ctx.prisma.book.findUnique({
+        where: { id: input.id },
+        include: { likes: true },
+      })
+
+      if (!booksWithLikes || booksWithLikes.likes.length === 0) {
+        return null
+      }
+
+      return {
+        book: booksWithLikes,
+        likes: booksWithLikes.likes
+      }
+    }),
+
   create: privateProcedure
     .input(
       z.object({
@@ -138,6 +154,22 @@ export const booksRouter = createTRPCRouter({
 
       return book;
     }),
+
+  toggleLike: privateProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
+    const data = { userId: ctx.userId, bookId: input.id };
+
+    const existingLike = await ctx.prisma.like.findUnique({
+      where: { userId_bookId: data },
+    });
+
+    if (existingLike == null) {
+      await ctx.prisma.like.create({ data });
+      return { addedLike: true }
+    } else {
+      await ctx.prisma.like.delete({ where: { userId_bookId: data } });
+      return { addedLike: false }
+    }
+  }),
 
   update: privateProcedure
     .input(

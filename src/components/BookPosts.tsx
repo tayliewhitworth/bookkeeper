@@ -4,11 +4,14 @@ import Link from "next/link";
 
 import { useUser } from "@clerk/nextjs";
 import { api } from "~/utils/api";
+import { toast } from "react-hot-toast";
 
 import dayjs from "dayjs";
 
 import relativeTime from "dayjs/plugin/relativeTime";
 import { LoadingSpinner } from "./loading";
+
+import { LikeBtn } from "./LikeBtn";
 
 dayjs.extend(relativeTime);
 
@@ -29,10 +32,8 @@ const BookPosts = (props: BookPostWithUser) => {
     });
   };
 
-  let errMsg = "";
-
   if (isError) {
-    errMsg = "unable to add...";
+    toast.error("Unable to add to wishlist, try again later!");
   }
 
   const matchedUser = clerkUser?.id === user.id;
@@ -63,8 +64,8 @@ const BookPosts = (props: BookPostWithUser) => {
         <p className="text-sm text-slate-700">
           {book.description.slice(0, 100)}...
         </p>
-        {isSignedIn && !matchedUser && (
-          <div className="mt-2">
+        <div className="mt-2 flex items-center justify-between">
+          {isSignedIn && !matchedUser && (
             <button
               onClick={() => {
                 addToWishlist();
@@ -81,9 +82,9 @@ const BookPosts = (props: BookPostWithUser) => {
                 "+ to wishlist"
               )}
             </button>
-            <p className="text-xs text-red-500">{errMsg}</p>
-          </div>
-        )}
+          )}
+          <LikeBtn id={book.id} />
+        </div>
       </div>
       <div className="flex items-center gap-2 px-5 py-2">
         <Link

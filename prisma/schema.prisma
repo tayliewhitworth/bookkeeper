@@ -22,7 +22,17 @@ model Book {
     imgSrc    String
     description String  @db.VarChar(255)
     userId    String
+    likes     Like[]
     @@index([userId])
+}
+
+model Like {
+    userId    String
+    book      Book  @relation(fields: [bookId], references: [id], onDelete: Cascade)
+    bookId    String
+    @@id([userId, bookId])
+    @@index([userId])
+    @@index([bookId])
 }
 
 
