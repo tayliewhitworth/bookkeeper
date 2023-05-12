@@ -112,6 +112,26 @@ export const booksRouter = createTRPCRouter({
       }
     }),
 
+    getUserWithLikes: publicProcedure.input(z.object({ userId: z.string() })).query(async ({ ctx, input }) => {
+      const userLikes = await ctx.prisma.like.findMany({
+        where: { userId: input.userId },
+        include: { book: true },
+        orderBy: [{ createdAt: "desc" }],
+      })
+  
+      if (!userLikes || userLikes.length === 0) {
+        return null
+      }
+
+      const books = userLikes.map(like => like.book)
+      const booksWithUsers = await addUserToBooks(books)
+  
+      return {
+        likes: userLikes,
+        books: booksWithUsers
+      }
+    }),
+
   create: privateProcedure
     .input(
       z.object({

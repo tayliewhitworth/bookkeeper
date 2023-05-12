@@ -51,19 +51,25 @@ const SingleBookPage: NextPage<{ id: string }> = ({ id }) => {
       <div className="min-h-screenp-4 mx-auto my-4 max-w-3xl p-2">
         <div className="flex flex-col items-center justify-between px-5 sm:flex-row">
           <div className="flex items-center gap-4 p-4">
-            <div className="overflow-hidden rounded-full">
-              <Image
-                src={data.user.profileImageUrl}
-                width={50}
-                height={50}
-                alt={
-                  data.user.username ??
-                  data.user.externalUsername ??
-                  data.user.name
-                }
-                className="object-cover h-[50px] w-[50px]"
-              />
-            </div>
+            <Link
+              href={`/@${
+                data.user?.username ? data.user.username : data.user.id
+              }`}
+            >
+              <div className="overflow-hidden rounded-full">
+                <Image
+                  src={data.user.profileImageUrl}
+                  width={50}
+                  height={50}
+                  alt={
+                    data.user.username ??
+                    data.user.externalUsername ??
+                    data.user.name
+                  }
+                  className="h-[50px] w-[50px] object-cover"
+                />
+              </div>
+            </Link>
             <div>
               <Link
                 href={`/@${

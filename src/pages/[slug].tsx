@@ -8,6 +8,8 @@ import { generateSSGHelper } from "~/server/helpers/ssgHelper";
 import { LoadingSpinner } from "~/components/loading";
 import { useUser } from "@clerk/nextjs";
 
+import { useState } from "react";
+
 import { UpdateProfile, CreateProfile } from "~/components/ProfileEdit";
 
 const ProfileBio = (props: { userId: string }) => {
@@ -47,7 +49,7 @@ const ProfileBio = (props: { userId: string }) => {
   return (
     <div className="flex flex-col gap-3">
       <p className="text-slate-500">{data.profile.bio}</p>
-      <div className="flex items-center justify-center gap-2 flex-wrap">
+      <div className="flex flex-wrap items-center justify-center gap-2">
         {tags.map((tag, index) => (
           <div
             className={`rounded-lg px-2 py-0.5 text-xs ${
@@ -67,9 +69,17 @@ const ProfileBio = (props: { userId: string }) => {
 };
 
 const ProfileFeed = (props: { userId: string }) => {
-  const { data, isLoading } = api.books.getBooksByUserId.useQuery({
+  const [showLikedBooks, setShowLikedBooks] = useState(false);
+  const readBooks = api.books.getBooksByUserId.useQuery({
     userId: props.userId,
   });
+
+  const likedBooks = api.books.getUserWithLikes.useQuery({
+    userId: props.userId,
+  });
+
+  const data = showLikedBooks ? likedBooks.data?.books : readBooks.data;
+  const isLoading = showLikedBooks ? likedBooks.isLoading : readBooks.isLoading;
 
   if (isLoading)
     return (
@@ -79,18 +89,57 @@ const ProfileFeed = (props: { userId: string }) => {
     );
 
   if (!data || data.length === 0)
-    return <div>User has not ready any books!</div>;
+    return <div>User has not read any books!</div>;
+
 
   return (
     <>
-      <div className="mx-auto my-3 flex max-w-fit flex-col items-center justify-center rounded-lg bg-slate-950 p-4 shadow-lg">
-        <p className="text-2xl font-bold text-violet-300">{data.length}</p>
-        <p className="text-sm text-slate-700">Books Read</p>
+      <div className="mx-auto my-3 flex max-w-fit items-center justify-center gap-4">
+        <div>
+          <button
+            onClick={() => setShowLikedBooks(false)}
+            className={`flex flex-col items-center rounded-lg p-4 text-2xl font-bold text-violet-300 shadow-lg ${
+              showLikedBooks ? "bg-slate-950" : "bg-violet-500"
+            }`}
+          >
+            {readBooks.data?.length}
+            <span className="text-sm font-normal text-slate-700">
+              Books Read
+            </span>
+          </button>
+        </div>
+        <div>
+          <button
+            disabled={!likedBooks.data?.books || likedBooks.data?.books.length === 0}
+            onClick={() => setShowLikedBooks(true)}
+            className={`flex flex-col items-center rounded-lg p-4 text-2xl font-bold text-violet-300 shadow-lg ${
+              showLikedBooks ? "bg-violet-500" : "bg-slate-950"
+            }`}
+          >
+            {likedBooks.data?.likes.length ?? 0}
+            <span className="text-sm font-normal text-slate-700">
+              Liked Books
+            </span>
+          </button>
+        </div>
       </div>
       <div className="m-auto grid grid-cols-1 justify-items-center gap-3 p-4 sm:grid-cols-2 lg:grid-cols-3">
         {data.map((fullBook) => (
           <BookPosts key={fullBook.book.id} {...fullBook} />
         ))}
+        {/* {showLikedBooks ? (
+          <>
+            {likedBooks.data.books.map((fullbook) => (
+              <BookPosts key={fullbook.book.id} {...fullbook} />
+            ))}
+          </>
+        ) : (
+          <>
+            {readBooks.data.map((fullBook) => (
+              <BookPosts key={fullBook.book.id} {...fullBook} />
+            ))}
+          </>
+        )} */}
       </div>
     </>
   );
@@ -114,7 +163,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
               width={50}
               height={50}
               alt="profile pic"
-              className="object-cover h-[50px] w-[50px]"
+              className="h-[50px] w-[50px] object-cover"
             />
           </div>
           <div>

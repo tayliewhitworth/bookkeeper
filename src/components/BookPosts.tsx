@@ -43,17 +43,19 @@ const BookPosts = (props: BookPostWithUser) => {
       key={book.id}
       className="max-w-xs overflow-hidden rounded bg-slate-950 py-4 shadow-lg"
     >
-      <Image
-        src={
-          book.imgSrc
-            ? book.imgSrc
-            : "https://placehold.co/200x250?text=Book+Cover&font=roboto"
-        }
-        alt={book.title}
-        width={200}
-        height={250}
-        className="m-auto flex justify-center rounded object-cover shadow-sm shadow-slate-400"
-      />
+      <Link title="Book Info" href={`/book/${book.id}`}>
+        <Image
+          src={
+            book.imgSrc
+              ? book.imgSrc
+              : "https://placehold.co/200x250?text=Book+Cover&font=roboto"
+          }
+          alt={book.title}
+          width={200}
+          height={250}
+          className="m-auto flex justify-center rounded object-cover shadow-sm shadow-slate-400"
+        />
+      </Link>
       <div className="px-5 py-4">
         <div className="mb-2 text-xl font-bold text-violet-300">
           <Link title="Book Info" href={`/book/${book.id}`}>

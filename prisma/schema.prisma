@@ -27,6 +27,7 @@ model Book {
 }
 
 model Like {
+    createdAt DateTime @default(now())
     userId    String
     book      Book  @relation(fields: [bookId], references: [id], onDelete: Cascade)
     bookId    String
