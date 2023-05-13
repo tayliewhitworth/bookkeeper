@@ -53,7 +53,7 @@ const SingleBookPage: NextPage<{ id: string }> = ({ id }) => {
           <div className="flex items-center gap-4 p-4">
             <Link
               href={`/@${
-                data.user?.username ? data.user.username : data.user.id
+                data.user?.username ? data.user.username : data.user.name
               }`}
             >
               <div className="overflow-hidden rounded-full">
@@ -73,7 +73,7 @@ const SingleBookPage: NextPage<{ id: string }> = ({ id }) => {
             <div>
               <Link
                 href={`/@${
-                  data.user?.username ? data.user.username : data.user.id
+                  data.user?.username ? data.user.username : data.user.name
                 }`}
               >
                 <p className="text-2xl font-bold text-violet-300">

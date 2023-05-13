@@ -2,6 +2,8 @@ import { useUser } from "@clerk/nextjs";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
 import { LoadingSpinner } from "./loading";
+import Link from "next/link";
+import Image from "next/image";
 
 import { useState } from "react";
 
@@ -119,12 +121,12 @@ export const FollowerCount = (props: { profileId: string; userId: string }) => {
         count={following.data ? following.data.following.length : 0}
         label="Following"
       />
-      {showUsernames === "following" && (
+      {(showUsernames === "following" || showUsernames === "followers") && (
         <div className="fixed z-50 h-screen w-screen bg-black bg-opacity-40">
           <div
             id="readProductDrawer"
             className={`fixed left-0 top-0 z-40 h-screen w-full max-w-xs overflow-y-auto bg-gray-800 p-4 transition-transform ${
-              showUsernames === "following"
+              showUsernames === "following" || showUsernames === "followers"
                 ? "translate-x-0 ease-out"
                 : "-translate-x-full ease-in"
             }`}
@@ -137,7 +139,7 @@ export const FollowerCount = (props: { profileId: string; userId: string }) => {
                 id="drawer-label"
                 className="mb-1.5 text-xl font-semibold leading-none text-violet-300"
               >
-                Following
+                {showUsernames === "following" ? "Following" : "Followers"}
               </h4>
             </div>
             <button
@@ -163,85 +165,83 @@ export const FollowerCount = (props: { profileId: string; userId: string }) => {
               <span className="sr-only">Close menu</span>
             </button>
             <div>
-              {following.data ? (
-                following.data.profiles.map((profile) => (
-                  <div
-                    className="flex flex-col items-start gap-3 p-2"
-                    key={profile.user.id}
-                  >
-                    <p className="text-sm text-slate-500">
-                      {profile.user.username}
-                    </p>
-                  </div>
-                ))
+              {showUsernames === "following" ? (
+                <>
+                  {following.data ? (
+                    following.data.profiles.map((profile) => (
+                      <div
+                        className="flex flex-col items-start gap-3 p-2"
+                        key={profile.user.id}
+                      >
+                        <Link
+                          href={`/@${
+                            profile.user.username
+                              ? profile.user.username
+                              : profile.user.name
+                          }`}
+                          onClick={() => setShowUsernames(null)}
+                        >
+                          <div className="flex items-center gap-2">
+                            <Image
+                              src={profile.user.profileImageUrl}
+                              alt={profile.user.name}
+                              width={48}
+                              height={48}
+                              className="h-[48px] w-[48px] rounded-full object-cover"
+                            />
+                            <p className="text-sm text-slate-500">
+                              @{profile.user.username}
+                            </p>
+                          </div>
+                        </Link>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="flex flex-col items-start gap-3 p-2">
+                      <p className="text-sm text-slate-500">No Users</p>
+                    </div>
+                  )}
+                </>
               ) : (
-                <div className="flex flex-col items-start gap-3 p-2">
-                  <p className="text-sm text-slate-500">No Users</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-      {showUsernames === "followers" && (
-        <div className="fixed z-50 h-screen w-screen bg-black bg-opacity-40">
-          <div
-            id="readProductDrawer"
-            className={`fixed left-0 top-0 z-40 h-screen w-full max-w-xs overflow-y-auto bg-gray-800 p-4 transition-transform ${
-              showUsernames === "followers"
-                ? "translate-x-0 ease-out"
-                : "-translate-x-full ease-in"
-            }`}
-            tabIndex={-1}
-            aria-labelledby="drawer-label"
-            aria-hidden="true"
-          >
-            <div className="py-4">
-              <h4
-                id="drawer-label"
-                className="mb-1.5 text-xl font-semibold leading-none text-violet-300"
-              >
-                Followers
-              </h4>
-            </div>
-            <button
-              onClick={() => setShowUsernames(null)}
-              type="button"
-              data-drawer-dismiss="readProductDrawer"
-              aria-controls="readProductDrawer"
-              className="absolute right-2.5 top-2.5 inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white"
-            >
-              <svg
-                aria-hidden="true"
-                className="h-5 w-5"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                  clip-rule="evenodd"
-                ></path>
-              </svg>
-              <span className="sr-only">Close menu</span>
-            </button>
-            <div>
-              {followers.data ? (
-                followers.data.withUsers.map((follower) => (
-                  <div
-                    key={follower?.followedBy.user.id}
-                    className="flex flex-col items-start gap-3 p-2"
-                  >
-                    <p className="text-sm text-slate-500">
-                      {follower?.followedBy.user.username}
-                    </p>
-                  </div>
-                ))
-              ) : (
-                <div className="flex flex-col items-start gap-3 p-2">
-                  <p className="text-sm text-slate-500">No Users</p>
-                </div>
+                <>
+                  {followers.data ? (
+                    followers.data.withUsers.map((follower) => {
+                      if (!follower) return null;
+                      return (
+                        <div
+                          key={follower.followedBy.user.id}
+                          className="flex flex-col items-start gap-3 p-2"
+                        >
+                          <Link
+                            href={`/@${
+                              follower.followedBy.user.username
+                                ? follower.followedBy.user.username
+                                : follower.followedBy.user.name
+                            }`}
+                            onClick={() => setShowUsernames(null)}
+                          >
+                            <div className="flex items-center gap-2">
+                              <Image
+                                src={follower.followedBy.user.profileImageUrl}
+                                alt={follower.followedBy.user.name}
+                                width={48}
+                                height={48}
+                                className="h-[48px] w-[48px] rounded-full object-cover"
+                              />
+                              <p className="text-sm text-slate-500">
+                                @{follower.followedBy.user.username}
+                              </p>
+                            </div>
+                          </Link>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="flex flex-col items-start gap-3 p-2">
+                      <p className="text-sm text-slate-500">No Users</p>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>

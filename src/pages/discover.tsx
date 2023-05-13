@@ -61,7 +61,7 @@ const Feed = () => {
             </Link>
             <div className="transition-colors hover:text-violet-400">
               <Link href={`/@${user.externalUsername ?? user.name}`}>
-                <p>{user.externalUsername ?? user.name}</p>
+                <p>@{user.externalUsername ?? user.name}</p>
               </Link>
             </div>
           </div>

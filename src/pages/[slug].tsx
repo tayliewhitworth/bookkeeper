@@ -95,9 +95,6 @@ const ProfileFeed = (props: { userId: string }) => {
       </div>
     );
 
-  if (!data || data.length === 0)
-    return <div>User has not read any books!</div>;
-
   return (
     <>
       <div className="mx-auto my-3 flex max-w-fit items-center justify-center gap-4">
@@ -108,7 +105,7 @@ const ProfileFeed = (props: { userId: string }) => {
               showLikedBooks ? "bg-slate-950" : "bg-violet-500"
             }`}
           >
-            {readBooks.data?.length}
+            {readBooks.data?.length ?? 0}
             <span className="text-sm font-normal text-slate-700">
               Books Read
             </span>
@@ -132,9 +129,13 @@ const ProfileFeed = (props: { userId: string }) => {
         </div>
       </div>
       <div className="m-auto grid grid-cols-1 justify-items-center gap-3 p-4 sm:grid-cols-2 lg:grid-cols-3">
-        {data.map((fullBook) => (
-          <BookPosts key={fullBook.book.id} {...fullBook} />
-        ))}
+        {data && data.length > 0 ? (
+          data.map((fullBook) => (
+            <BookPosts key={fullBook.book.id} {...fullBook} />
+          ))
+        ) : (
+          <div className="text-center text-violet-300 font-medium text-lg">User has no books🥲</div>
+        )}
       </div>
     </>
   );

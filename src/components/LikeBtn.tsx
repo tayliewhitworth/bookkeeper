@@ -13,6 +13,7 @@ export const LikeBtn = (props: { id: string }) => {
   const toggleLike = api.books.toggleLike.useMutation({
     onSuccess: () => {
       void ctx.books.getBookWithLikes.invalidate();
+      void ctx.books.getUserWithLikes.invalidate();
     },
     onError: () => {
       toast.error("Unable to like book, try again later!");

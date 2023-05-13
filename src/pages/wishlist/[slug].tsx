@@ -19,20 +19,24 @@ const WishlistItems = (props: { userId: string }) => {
       </div>
     );
 
-  if (!data || data.length === 0) return <div>User has no wishlist items!</div>;
-
   return (
     <>
-      <div className="flex gap-2 items-center justify-between text-3xl font-bold text-violet-300 mb-3 px-4">
+      <div className="mb-3 flex items-center justify-between gap-2 px-4 text-3xl font-bold text-violet-300">
         <h1>Wishlist</h1>
         <div className="justify-self-end font-normal">
           <AddWishlistItem />
         </div>
       </div>
       <div className="grid gap-4">
-        {data.map((wishlistItem) => (
-          <WishistItem key={wishlistItem.wishlistItem.id} {...wishlistItem} />
-        ))}
+        {data && data.length > 0 ? (
+          data.map((wishlistItem) => (
+            <WishistItem key={wishlistItem.wishlistItem.id} {...wishlistItem} />
+          ))
+        ) : (
+          <div className="flex items-center justify-center text-lg text-slate-400">
+            No wishlist items! Press the + button to add some!🤩
+          </div>
+        )}
       </div>
     </>
   );
@@ -51,9 +55,6 @@ const Wishlist: NextPage<{ username: string }> = ({ username }) => {
         </title>
       </Head>
       <div className="mx-auto my-4 flex min-h-screen max-w-2xl flex-col gap-2 p-2">
-        {/* <div className="flex items-center justify-center text-3xl font-bold text-violet-300">
-          <h1>Wishlist</h1>
-        </div> */}
         <WishlistItems userId={data.id} />
       </div>
     </>

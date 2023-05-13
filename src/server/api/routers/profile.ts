@@ -95,6 +95,7 @@ export const profileRouter = createTRPCRouter({
   getAllUsers: publicProcedure.query(async () => {
     const users = await clerkClient.users.getUserList({
       limit: 100,
+      orderBy: "-created_at",
     });
 
     return users.map(filterUserForClient);
