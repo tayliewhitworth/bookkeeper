@@ -54,5 +54,16 @@ model Profile {
     bio     String     @db.VarChar(255)
     tags    String     @db.VarChar(255)    
     userId    String
+    followers FollowerRelationship[]
     @@index([userId])
+}
+
+model FollowerRelationship {
+    createdAt DateTime @default(now())
+    userId    String
+    profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+    profileId String
+    @@id([userId, profileId])
+    @@index([userId])
+    @@index([profileId])
 }

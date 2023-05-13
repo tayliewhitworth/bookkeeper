@@ -11,13 +11,14 @@ import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
 
 import { UpdateProfile, CreateProfile } from "~/components/ProfileEdit";
+import { FollowBtn, FollowerCount } from "~/components/FollowBtn";
 
 const ProfileBio = (props: { userId: string }) => {
   const { data, isLoading } = api.profile.getProfileByUserId.useQuery({
     userId: props.userId,
   });
 
-  const { user } = useUser();
+  const { user, isSignedIn } = useUser();
 
   if (isLoading)
     return (
@@ -64,6 +65,12 @@ const ProfileBio = (props: { userId: string }) => {
       <div>
         {user?.id === props.userId && <UpdateProfile userId={props.userId} />}
       </div>
+      {user?.id !== props.userId && isSignedIn && (
+        <FollowBtn id={data.profile.id} />
+      )}
+      <div>
+        <FollowerCount profileId={data.profile.id} userId={props.userId} />
+      </div>
     </div>
   );
 };
@@ -91,7 +98,6 @@ const ProfileFeed = (props: { userId: string }) => {
   if (!data || data.length === 0)
     return <div>User has not read any books!</div>;
 
-
   return (
     <>
       <div className="mx-auto my-3 flex max-w-fit items-center justify-center gap-4">
@@ -110,7 +116,9 @@ const ProfileFeed = (props: { userId: string }) => {
         </div>
         <div>
           <button
-            disabled={!likedBooks.data?.books || likedBooks.data?.books.length === 0}
+            disabled={
+              !likedBooks.data?.books || likedBooks.data?.books.length === 0
+            }
             onClick={() => setShowLikedBooks(true)}
             className={`flex flex-col items-center rounded-lg p-4 text-2xl font-bold text-violet-300 shadow-lg ${
               showLikedBooks ? "bg-violet-500" : "bg-slate-950"
@@ -127,19 +135,6 @@ const ProfileFeed = (props: { userId: string }) => {
         {data.map((fullBook) => (
           <BookPosts key={fullBook.book.id} {...fullBook} />
         ))}
-        {/* {showLikedBooks ? (
-          <>
-            {likedBooks.data.books.map((fullbook) => (
-              <BookPosts key={fullbook.book.id} {...fullbook} />
-            ))}
-          </>
-        ) : (
-          <>
-            {readBooks.data.map((fullBook) => (
-              <BookPosts key={fullBook.book.id} {...fullBook} />
-            ))}
-          </>
-        )} */}
       </div>
     </>
   );
