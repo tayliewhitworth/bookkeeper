@@ -15,6 +15,7 @@ import { toast } from "react-hot-toast";
 import UpdateBook from "~/components/UpdateBookForm";
 
 import { LikeBtn } from "~/components/LikeBtn";
+import { Rating } from "~/components/Rating";
 
 dayjs.extend(relativeTime);
 
@@ -132,6 +133,9 @@ const SingleBookPage: NextPage<{ id: string }> = ({ id }) => {
               </div>
               <div>
                 <p className="max-w-sm text-lg">{data.book.description}</p>
+              </div>
+              <div className="text-violet-500">
+                <Rating rating={data.book.rating} />
               </div>
             </div>
             <div className="flex items-center justify-center gap-2 rounded-lg bg-slate-950 p-4 text-violet-300">

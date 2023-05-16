@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { clerkClient } from "@clerk/nextjs/server";
 
 import {
   createTRPCRouter,
@@ -18,48 +17,7 @@ const ratelimit = new Ratelimit({
   analytics: true,
 });
 
-import { filterUserForClient } from "~/server/helpers/filterUserForClient";
-import type { Book } from "@prisma/client";
-
-const addUserToBooks = async (books: Book[]) => {
-  const userId = books.map((book) => book.userId);
-  const users = (
-    await clerkClient.users.getUserList({
-      userId: userId,
-      limit: 100,
-    })
-  ).map(filterUserForClient);
-
-  return books.map((book) => {
-    const user = users.find((user) => user.id === book.userId);
-
-    if (!user) {
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: `User for book not found. POST ID: ${book.id}, USER ID: ${book.userId}`,
-      });
-    }
-    if (!user.username) {
-      if (user.externalUsername) {
-        user.username = user.externalUsername;
-      } else if (user.name) {
-        user.username = user.name;
-      } else {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: `User for book not found. POST ID: ${book.id}, USER ID: ${book.userId}`,
-        });
-      }
-    }
-    return {
-      book,
-      user: {
-        ...user,
-        username: user.username ?? "(username not found)",
-      },
-    };
-  });
-};
+import { addUserToBooks } from "~/server/helpers/addUserToBooks";
 
 export const booksRouter = createTRPCRouter({
   getById: publicProcedure
@@ -161,6 +119,7 @@ export const booksRouter = createTRPCRouter({
           .min(1, { message: "Must be 1 or more characters long" })
           .max(255, { message: "Must be less than 255 characters long" }),
         imgSrc: z.string(),
+        rating: z.number().min(0).max(5),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -207,6 +166,7 @@ export const booksRouter = createTRPCRouter({
         dateStarted: z.string().datetime(),
         dateFinished: z.string().datetime(),
         genre: z.string().min(1).max(255),
+        rating: z.number().min(0).max(5),
       })
     )
     .mutation(async ({ ctx, input }) => {

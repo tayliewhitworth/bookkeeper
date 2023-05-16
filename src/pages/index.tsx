@@ -1,11 +1,8 @@
 import { type NextPage } from "next";
-
-
 import { LoadingSpinner } from "~/components/loading";
-
 import BookPosts from "~/components/BookPosts";
-
 import { api } from "~/utils/api";
+
 
 const Feed = () => {
   const { data } = api.books.getAll.useQuery();
@@ -35,7 +32,9 @@ const Home: NextPage = () => {
     <>
       <main className="min-h-screen flex-col items-center">
         <div>
-          <h1 className="text-4xl font-bold text-center text-violet-300">Book Club</h1>
+          <h1 className="text-center text-4xl font-bold text-violet-300">
+            Book Club
+          </h1>
         </div>
         <Feed />
       </main>

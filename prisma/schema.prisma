@@ -23,6 +23,7 @@ model Book {
     description String  @db.VarChar(255)
     userId    String
     likes     Like[]
+    rating    Float   @default(0.0)
     @@index([userId])
 }
 

@@ -39,6 +39,7 @@ const AddBook: NextPage = () => {
   const [coverImage, setCoverImage] = useState<
     string | StaticImageData | null | undefined
   >(placeholderImage);
+  const [rating, setRating] = useState(0);
 
   const ctx = api.useContext();
   const { mutate, isLoading } = api.books.create.useMutation({
@@ -249,6 +250,27 @@ const AddBook: NextPage = () => {
                       </div>
                     </div>
                   </div>
+                  <div className="w-fit">
+                    <label
+                      htmlFor="rating"
+                      className="mb-2 block text-sm font-medium text-white"
+                    >
+                      Rating out of 5
+                    </label>
+                    <input
+                      type="number"
+                      name="rating"
+                      id="rating"
+                      value={rating}
+                      onChange={(e) => setRating(parseFloat(e.target.value))}
+                      step={0.5}
+                      min={0}
+                      max={5}
+                      className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 text-sm text-white placeholder-gray-400"
+                      placeholder="(0-5)"
+                      required
+                    />
+                  </div>
                   <div className="sm:col-span-2">
                     <label
                       htmlFor="description"
@@ -281,6 +303,7 @@ const AddBook: NextPage = () => {
                       dateFinished: new Date(dateFinished).toISOString(),
                       description,
                       imgSrc: imgSrc !== undefined ? imgSrc : "",
+                      rating,
                     });
                   }}
                   disabled={!canSave}

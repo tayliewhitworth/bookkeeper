@@ -16,21 +16,23 @@ const Feed = () => {
   // future me: this will help when adding search by category
   const filteredData = useMemo(() => {
     if (!data) {
-      return []
+      return [];
     }
 
     return data.filter((user) => {
       if (searchTerm.trim() === "") {
         return true;
-      } else if (user.username) {
-        return user.username.toLowerCase().includes(searchTerm.toLowerCase());
-      } else if (user.externalUsername) {
-        return user.externalUsername
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase());
-      } else {
-        return user.name.toLowerCase().includes(searchTerm.toLowerCase());
       }
+
+      const lowerCaseSearchTerm = searchTerm.toLowerCase();
+
+      return (
+        (user.username &&
+          user.username.toLowerCase().includes(lowerCaseSearchTerm)) ||
+        (user.externalUsername &&
+          user.externalUsername.toLowerCase().includes(lowerCaseSearchTerm)) ||
+        (user.name && user.name.toLowerCase().includes(lowerCaseSearchTerm))
+      );
     });
   }, [data, searchTerm]);
 
@@ -46,7 +48,7 @@ const Feed = () => {
         />
       </div>
       <div className="m-auto grid place-content-center gap-4 p-5">
-        {filteredData?.map((user) => (
+        {filteredData.length > 0 ? (filteredData.map((user) => (
           <div key={user.id} className="flex items-center gap-2">
             <Link href={`/@${user.externalUsername ?? user.name}`}>
               <div className="overflow-hidden rounded-full transition-shadow hover:shadow-md hover:shadow-violet-300">
@@ -55,7 +57,7 @@ const Feed = () => {
                   alt={user.name}
                   width={50}
                   height={50}
-                  className="object-cover h-[50px] w-[50px]"
+                  className="h-[50px] w-[50px] object-cover"
                 />
               </div>
             </Link>
@@ -65,7 +67,9 @@ const Feed = () => {
               </Link>
             </div>
           </div>
-        ))}
+        ))) : (
+          <div>No Matches</div>
+        )}
       </div>
     </>
   );
@@ -91,7 +95,6 @@ const Discover: NextPage = () => {
             Discover
           </h1>
         </div>
-
         <Feed />
       </main>
     </>

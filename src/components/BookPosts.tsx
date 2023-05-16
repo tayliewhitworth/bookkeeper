@@ -12,6 +12,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { LoadingSpinner } from "./loading";
 
 import { LikeBtn } from "./LikeBtn";
+import { Rating } from "./Rating";
 
 dayjs.extend(relativeTime);
 
@@ -61,6 +62,9 @@ const BookPosts = (props: BookPostWithUser) => {
           <Link title="Book Info" href={`/book/${book.id}`}>
             {book.title}
           </Link>
+        </div>
+        <div className="text-slate-700 pb-2">
+          <Rating rating={book.rating} />
         </div>
 
         <p className="text-sm text-slate-700">

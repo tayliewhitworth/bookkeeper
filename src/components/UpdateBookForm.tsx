@@ -24,6 +24,7 @@ type Inputs = {
   description: string;
   dateStarted: string;
   dateFinished: string;
+  rating: number;
 };
 
 const UpdateBook = (props: { id: string }) => {
@@ -58,6 +59,7 @@ const UpdateBook = (props: { id: string }) => {
           genre: formData.genre,
           dateStarted: new Date(formData.dateStarted).toISOString(),
           dateFinished: new Date(formData.dateFinished).toISOString(),
+          rating: Number(formData.rating),
         })
         .then(() => {
           setShowModal(false);
@@ -93,9 +95,7 @@ const UpdateBook = (props: { id: string }) => {
             <section className="m-auto max-w-xl rounded-lg bg-gray-800 p-1">
               <div className="mx-auto max-w-2xl px-4 py-8">
                 <div className="mb-4 flex items-center justify-between rounded-t border-b border-gray-600 pb-4 sm:mb-5">
-                  <h3 className="text-lg font-bold text-white">
-                    Editors Note
-                  </h3>
+                  <h3 className="text-lg font-bold text-white">Editors Note</h3>
                   <button
                     type="button"
                     className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm hover:bg-gray-600 hover:text-white"
@@ -197,6 +197,25 @@ const UpdateBook = (props: { id: string }) => {
                           "YYYY-MM-DDTHH:mm"
                         )}
                         {...register("dateFinished")}
+                        className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 text-sm text-white placeholder-gray-400"
+                      />
+                    </div>
+
+                    <div className="w-fit">
+                      <label
+                        htmlFor="rating"
+                        className="mb-2 block text-sm font-medium text-white"
+                      >
+                        Rating out of 5
+                      </label>
+
+                      <input
+                        type="number"
+                        max={5}
+                        min={0}
+                        step={0.5}
+                        defaultValue={data.book.rating}
+                        {...register("rating")}
                         className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 text-sm text-white placeholder-gray-400"
                       />
                     </div>

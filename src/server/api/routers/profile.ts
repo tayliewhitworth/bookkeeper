@@ -9,43 +9,22 @@ import {
 } from "~/server/api/trpc";
 import { filterUserForClient } from "~/server/helpers/filterUserForClient";
 
-import type { Profile } from "@prisma/client";
+import { addUserToProfile } from "~/server/helpers/addUserToProfile";
+import { addUserToBooks } from "~/server/helpers/addUserToBooks";
+import type { Book } from "@prisma/client";
 
-const addUserToProfile = async (profile: Profile) => {
-  const userId = profile.userId;
-  const [user] = (
-    await clerkClient.users.getUserList({
-      userId: [userId],
-    })
-  ).map(filterUserForClient);
-
-  if (!user) {
-    throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: `User for profile not found. PROFILE ID: ${profile.id}, USER ID: ${profile.userId}`,
-    });
-  }
-
-  if (!user.username) {
-    if (user.externalUsername) {
-      user.username = user.externalUsername;
-    } else if (user.name) {
-      user.username = user.name;
-    } else {
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: `User for profile not found. PROFILE ID: ${profile.id}, USER ID: ${profile.userId}`,
-      });
-    }
-  }
-  return {
-    profile,
-    user: {
-      ...user,
-      username: user.username ?? "(username not found)",
-    },
+type UserBook = {
+  book: Book;
+  user: {
+      username: string;
+      id: string;
+      profileImageUrl: string;
+      name: string;
+      externalUsername: string | null;
   };
-};
+}
+
+type UserBooks = UserBook[];
 
 export const profileRouter = createTRPCRouter({
   getUserByUsername: publicProcedure
@@ -233,9 +212,22 @@ export const profileRouter = createTRPCRouter({
       );
       const resolvedProfiles = await Promise.all(profiles);
 
+      let followingBooks: UserBooks = [];
+
+      for (const profile of resolvedProfiles) {
+        const userBooks = await ctx.prisma.book.findMany({
+          where: { userId: profile.user.id },
+          take: 100,
+          orderBy: [{ createdAt: "desc" }],
+        })
+        .then(addUserToBooks)
+        followingBooks = [...followingBooks, ...userBooks]
+      }
+
       return {
         following: userFollowing,
         profiles: resolvedProfiles,
+        books: followingBooks,
       };
     }),
 
