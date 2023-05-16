@@ -230,27 +230,36 @@ const AddBook: NextPage = () => {
                         data-popover
                         id="popover-description"
                         role="tooltip"
-                        className={`absolute z-10 inline-block w-72 rounded-lg border border-gray-200 bg-white text-sm text-gray-500 shadow-sm transition-opacity duration-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 ${showInfo ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
+                        className={`absolute z-10 inline-block w-72 rounded-lg border border-gray-200 bg-white text-sm text-gray-500 shadow-sm transition-opacity duration-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 ${
+                          showInfo
+                            ? "visible opacity-100"
+                            : "invisible opacity-0"
+                        }`}
                       >
                         <div className="space-y-2 p-3">
                           <h3 className="font-semibold text-gray-900 dark:text-white">
                             Generate Image Cover
                           </h3>
                           <p>
-                            Have you ever heard the phrase, &quot;Don&apos;t judge a book by its cover&quot;? 
+                            Have you ever heard the phrase, &quot;Don&apos;t
+                            judge a book by its cover&quot;?
                           </p>
-                          <h3 className="font-semibold text-gray-900 dark:text-white">Well, that is our philosophy!</h3>
+                          <h3 className="font-semibold text-gray-900 dark:text-white">
+                            Well, that is our philosophy!
+                          </h3>
                           <p>
-                          
-                          We currently use the Google Books API to generate a cover image for your book. We are working on a feature to allow you to upload your own image in the future. Stay tuned! 
-                            But for now, enjoy the original cover image!
+                            We currently use the Google Books API to generate a
+                            cover image for your book. We are working on a
+                            feature to allow you to upload your own image in the
+                            future. Stay tuned! But for now, enjoy the original
+                            cover image!
                           </p>
                         </div>
                         <div data-popper-arrow></div>
                       </div>
                     </div>
                   </div>
-                  <div className="w-fit">
+                  {/* <div className="w-fit">
                     <label
                       htmlFor="rating"
                       className="mb-2 block text-sm font-medium text-white"
@@ -270,6 +279,38 @@ const AddBook: NextPage = () => {
                       placeholder="(0-5)"
                       required
                     />
+                  </div> */}
+                  <div>
+                    <label
+                      htmlFor="steps-range"
+                      className="mb-2 block text-sm font-medium text-white"
+                    >
+                      Rating out of 5
+                    </label>
+                    <input
+                      id="steps-range"
+                      type="range"
+                      min="0"
+                      max="5"
+                      value={rating}
+                      onChange={(e) => setRating(parseFloat(e.target.value))}
+                      step="0.5"
+                      className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-gray-700"
+                    />
+                    <ul className="flex items-center justify-between text-xs text-gray-500">
+                      <li>0</li>
+                      <li>0.5</li>
+                      <li>1</li>
+                      <li>1.5</li>
+                      <li>2</li>
+                      <li>2.5</li>
+                      <li>3</li>
+                      <li>3.5</li>
+                      <li>4</li>
+                      <li>4.5</li>
+                      <li>5</li>
+                    </ul>
+                    <p className="pt-2 text-sm">{rating} out of 5</p>
                   </div>
                   <div className="sm:col-span-2">
                     <label
