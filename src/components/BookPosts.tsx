@@ -97,7 +97,7 @@ const BookPosts = (props: BookPostWithUser) => {
           title={`@${user.externalUsername ?? user.name}'s profile`}
           href={`/@${user?.username ? user.username : user.name}`}
         >
-          <div className="relative h-8 w-8 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-600">
+          <div className="relative h-8 w-8 overflow-hidden rounded-full bg-gray-600">
             {user?.profileImageUrl ? (
               <Image
                 src={user.profileImageUrl}

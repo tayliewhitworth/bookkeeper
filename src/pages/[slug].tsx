@@ -48,12 +48,12 @@ const ProfileBio = (props: { userId: string }) => {
   const tags = data.profile.tags.split(",");
 
   return (
-    <div className="flex flex-col gap-3">
-      <p className="text-slate-500">{data.profile.bio}</p>
-      <div className="flex flex-wrap items-center justify-center gap-2">
+    <div className="flex flex-col gap-4">
+      <p className="max-w-lg text-slate-500">{data.profile.bio}</p>
+      <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
         {tags.map((tag, index) => (
           <div
-            className={`rounded-lg px-2 py-0.5 text-xs ${
+            className={`rounded-lg py-0.5 pl-2 pr-1 text-xs ${
               colors[index % colors.length] ?? "bg-violet-500"
             }`}
             key={index}
@@ -134,7 +134,9 @@ const ProfileFeed = (props: { userId: string }) => {
             <BookPosts key={fullBook.book.id} {...fullBook} />
           ))
         ) : (
-          <div className="text-center text-violet-300 font-medium text-lg">User has no books🥲</div>
+          <div className="text-center text-lg font-medium text-violet-300">
+            User has no books🥲
+          </div>
         )}
       </div>
     </>

@@ -30,7 +30,7 @@ function Navbar() {
                 <span>
                   <Image src={logo} alt="Book Keeper" width={30} height={30} />
                 </span>
-                <h2 className="text-1xl font-bold text-violet-300">
+                <h2 className="text-2xl font-bold text-violet-300">
                   BookKeeper
                 </h2>
               </Link>

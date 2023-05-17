@@ -244,7 +244,7 @@ const UpdateBook = (props: { id: string }) => {
                   </div>
 
                   <div className="mt-4">
-                    <p className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                    <p className="flex items-center text-sm text-gray-400">
                       Where is my book cover?{" "}
                       <button
                         data-popover-target="popover-description"
@@ -273,19 +273,19 @@ const UpdateBook = (props: { id: string }) => {
                       data-popover
                       id="popover-description"
                       role="tooltip"
-                      className={`absolute z-10 inline-block w-72 rounded-lg border border-gray-200 bg-white text-sm text-gray-500 shadow-sm transition-opacity duration-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 ${
+                      className={`absolute z-10 inline-block w-72 rounded-lg border text-sm shadow-sm transition-opacity duration-300 border-gray-600 bg-gray-800 text-gray-400 ${
                         showInfo ? "visible opacity-100" : "invisible opacity-0"
                       }`}
                     >
                       <div className="space-y-2 p-3">
-                        <h3 className="font-semibold text-gray-900 dark:text-white">
+                        <h3 className="font-semibold text-white">
                           Generate Image Cover
                         </h3>
                         <p>
                           Have you ever heard the phrase, &quot;Don&apos;t judge
                           a book by its cover&quot;?
                         </p>
-                        <h3 className="font-semibold text-gray-900 dark:text-white">
+                        <h3 className="font-semibold text-white">
                           Well, that is our philosophy!
                         </h3>
                         <p>

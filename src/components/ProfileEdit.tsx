@@ -5,6 +5,22 @@ import { LoadingSpinner } from "./loading";
 
 import { toast } from "react-hot-toast";
 
+const genreOptions = [
+  "Action🏃",
+  "Romance💓",
+  "Comedy😂",
+  "Business🤔",
+  "Self-Improvement👍",
+  "Fantasy🧙",
+  "Sci-Fi🚀",
+  "Horror👻",
+  "Thriller😎",
+  "Mystery🔍",
+  "Historical👵",
+  "Non-Fiction😏",
+  "Biography🤩",
+];
+
 export const UpdateProfile = (props: { userId: string }) => {
   const { data } = api.profile.getProfileByUserId.useQuery({
     userId: props.userId,
@@ -17,22 +33,6 @@ export const UpdateProfile = (props: { userId: string }) => {
     data?.profile.tags.split(",")
   );
   const ctx = api.useContext();
-
-  const genreOptions = [
-    "Action🏃",
-    "Romance💓",
-    "Comedy😂",
-    "Business🤔",
-    "Self-Improvement👍",
-    "Fantasy🧙",
-    "Sci-Fi🚀",
-    "Horror👻",
-    "Thriller😎",
-    "Mystery🔍",
-    "Historical👵",
-    "Non-Fiction😏",
-    "Biography🤩",
-  ];
 
   if (!data || data.profile === null) {
     return <div>No profile to edit</div>;
@@ -55,7 +55,7 @@ export const UpdateProfile = (props: { userId: string }) => {
 
   const tagsString = tags?.filter((tag) => tag.trim() !== "").join(",") ?? "";
 
-  const canSave = [bio, tagsString].every(Boolean) || !isLoading;
+  const canSave = [bio, tags?.length].every(Boolean) && !isLoading;
 
   const updateProfile = () => {
     mutate({
@@ -195,22 +195,6 @@ export const CreateProfile = () => {
   const [bio, setBio] = useState("");
   const [tags, setTags] = useState<string[]>([]);
 
-  const genreOptions = [
-    "Action🏃",
-    "Romance💓",
-    "Comedy😂",
-    "Business🤔",
-    "Self-Improvement👍",
-    "Fantasy🧙",
-    "Sci-Fi🚀",
-    "Horror👻",
-    "Thriller😎",
-    "Mystery🔍",
-    "Historical👵",
-    "Non-Fiction😏",
-    "Biography🤩",
-  ];
-
   const ctx = api.useContext();
 
   const { mutate, isLoading } = api.profile.create.useMutation({
@@ -225,7 +209,7 @@ export const CreateProfile = () => {
     },
   });
 
-  const canSave = [bio, tags.length].every(Boolean) || !isLoading;
+  const canSave = [bio, tags.length].every(Boolean) && !isLoading;
 
   return (
     <div>
