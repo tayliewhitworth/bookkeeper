@@ -42,6 +42,30 @@ export const booksRouter = createTRPCRouter({
     return addUserToBooks(books);
   }),
 
+  infinteFeed: publicProcedure
+    .input(
+      z.object({ limit: z.number().optional(), cursor: z.object({ id: z.string(), createdAt: z.date()}).optional(), })
+    )
+    .query(async ({ ctx, input: { limit = 5, cursor} }) => {
+      const books = await ctx.prisma.book.findMany({
+        take: limit + 1,
+        cursor: cursor ? { createdAt_id: cursor } : undefined,
+        orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+      });
+
+      let nextCursor: typeof cursor | undefined;
+      if (books.length > limit) {
+        const nextItem = books.pop()
+        if (nextItem != null) {
+          nextCursor = { id: nextItem.id, createdAt: nextItem.createdAt }
+        }
+      }
+      return {
+        books: await addUserToBooks(books),
+        nextCursor
+      }
+    }),
+
   getBooksByUserId: publicProcedure
     .input(z.object({ userId: z.string() }))
     .query(({ ctx, input }) =>

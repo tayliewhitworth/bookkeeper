@@ -147,6 +147,7 @@ export const WishistItem = (props: WishlistItemWithUser) => {
         <Link href={wishlistItem.link} target="_blank">
           Buy Book
         </Link>
+        {/* Add delete btn down here to be flex with add Book */}
       </div>
     </div>
   );

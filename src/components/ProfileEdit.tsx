@@ -18,6 +18,7 @@ const genreOptions = [
   "Mystery🔍",
   "Historical👵",
   "Non-Fiction😏",
+  "Fiction📖",
   "Biography🤩",
 ];
 

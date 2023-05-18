@@ -24,6 +24,7 @@ model Book {
     userId    String
     likes     Like[]
     rating    Float   @default(0.0)
+    @@unique([createdAt, id])
     @@index([userId])
 }
 

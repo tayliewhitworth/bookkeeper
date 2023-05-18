@@ -11,20 +11,21 @@ import { filterUserForClient } from "~/server/helpers/filterUserForClient";
 
 import { addUserToProfile } from "~/server/helpers/addUserToProfile";
 import { addUserToBooks } from "~/server/helpers/addUserToBooks";
-import type { Book } from "@prisma/client";
+// import type { Book } from "@prisma/client";
+import type { BookData } from "~/server/helpers/bookType";
 
-type UserBook = {
-  book: Book;
-  user: {
-      username: string;
-      id: string;
-      profileImageUrl: string;
-      name: string;
-      externalUsername: string | null;
-  };
-}
+// type UserBook = {
+//   book: Book;
+//   user: {
+//       username: string;
+//       id: string;
+//       profileImageUrl: string;
+//       name: string;
+//       externalUsername: string | null;
+//   };
+// }
 
-type UserBooks = UserBook[];
+type UserBooks = BookData[];
 
 export const profileRouter = createTRPCRouter({
   getUserByUsername: publicProcedure

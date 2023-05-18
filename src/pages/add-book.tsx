@@ -24,6 +24,23 @@ interface BookCoverResponseBody {
   }[];
 }
 
+export const genreOptions = [
+  "Action🏃",
+  "Romance💓",
+  "Comedy😂",
+  "Business🤔",
+  "Self-Improvement👍",
+  "Fantasy🧙",
+  "Sci-Fi🚀",
+  "Horror👻",
+  "Thriller😎",
+  "Mystery🔍",
+  "Historical👵",
+  "Non-Fiction😏",
+  "Fiction📖",
+  "Biography🤩",
+];
+
 const AddBook: NextPage = () => {
   const { user } = useUser();
   const router = useRouter();
@@ -73,6 +90,14 @@ const AddBook: NextPage = () => {
     }
   };
 
+  // const handleBookDataChange = (data: BookFormData) => {
+  //   setTitle(data.title);
+  //   setAuthor(data.author);
+  //   setGenre(data.genre);
+  //   setDescription(data.description);
+  //   setBookCover(data.bookCover);
+  // }
+
   const canSave =
     [title, author, genre, dateStarted, description].every(Boolean) &&
     !isLoading;
@@ -86,8 +111,13 @@ const AddBook: NextPage = () => {
       </Head>
       <main className="min-h-screen flex-col items-center p-4">
         <div>
+          {/* 
+            <div>
+            <GenreateBook onBookDataChange={handleBookDataChange} />
+            </div>
+          */}
           <section className="m-auto max-w-xl rounded-lg bg-slate-950 p-1">
-            <div className="mx-auto max-w-2xl px-4 py-8 lg:py-16">
+            <div className="mx-auto max-w-2xl px-4 py-8">
               <h2 className="mb-4 text-xl font-bold text-white">
                 Add a new book to your collection!
               </h2>
@@ -137,8 +167,7 @@ const AddBook: NextPage = () => {
                     >
                       Genre
                     </label>
-
-                    <input
+                    {/* <input
                       type="text"
                       name="genre"
                       id="genre"
@@ -147,7 +176,20 @@ const AddBook: NextPage = () => {
                       className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 text-sm text-white placeholder-gray-400"
                       placeholder="Book Genre"
                       required
-                    />
+                    /> */}
+                    <select
+                      id="genre"
+                      value={genre}
+                      onChange={(e) => setGenre(e.target.value)}
+                      required
+                      className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 text-sm text-white placeholder-gray-400"
+                    >
+                      {genreOptions.map((genre) => (
+                        <option key={genre} value={genre}>
+                          {genre}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div className="w-full">
                     <label
@@ -230,7 +272,7 @@ const AddBook: NextPage = () => {
                         data-popover
                         id="popover-description"
                         role="tooltip"
-                        className={`absolute z-10 inline-block w-72 rounded-lg border text-sm shadow-sm transition-opacity duration-300 border-gray-600 bg-gray-800 text-gray-400 ${
+                        className={`absolute z-10 inline-block w-72 rounded-lg border border-gray-600 bg-gray-800 text-sm text-gray-400 shadow-sm transition-opacity duration-300 ${
                           showInfo
                             ? "visible opacity-100"
                             : "invisible opacity-0"
@@ -259,27 +301,6 @@ const AddBook: NextPage = () => {
                       </div>
                     </div>
                   </div>
-                  {/* <div className="w-fit">
-                    <label
-                      htmlFor="rating"
-                      className="mb-2 block text-sm font-medium text-white"
-                    >
-                      Rating out of 5
-                    </label>
-                    <input
-                      type="number"
-                      name="rating"
-                      id="rating"
-                      value={rating}
-                      onChange={(e) => setRating(parseFloat(e.target.value))}
-                      step={0.5}
-                      min={0}
-                      max={5}
-                      className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 text-sm text-white placeholder-gray-400"
-                      placeholder="(0-5)"
-                      required
-                    />
-                  </div> */}
                   <div>
                     <label
                       htmlFor="steps-range"
