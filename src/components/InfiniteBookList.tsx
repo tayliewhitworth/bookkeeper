@@ -34,7 +34,7 @@ export const InfiniteBookList = ({
         next={fetchNewBooks}
         hasMore={hasMore}
         loader={<LoadingSpinner />}
-        className="m-auto grid grid-cols-1 justify-items-center gap-3 p-4 sm:grid-cols-2 lg:grid-cols-3"
+        className="flex flex-col gap-4 py-4"
       >
         {books.map((book) => (
           <BookPosts key={book.book.id} {...book} />

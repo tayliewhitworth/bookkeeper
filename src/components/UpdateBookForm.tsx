@@ -63,6 +63,7 @@ const UpdateBook = (props: { id: string }) => {
         })
         .then(() => {
           setShowModal(false);
+          void ctx.books.infinteFeed.invalidate();
           void ctx.books.getById.invalidate();
         });
     } catch (error) {

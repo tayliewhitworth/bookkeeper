@@ -24,6 +24,20 @@ interface BookCoverResponseBody {
   }[];
 }
 
+interface DataResponseBody {
+  items: {
+    volumeInfo: {
+      title?: string | null;
+      authors?: string[] | null;
+      categories?: string[] | null;
+      description?: string | null;
+      imageLinks?: {
+        thumbnail?: string | null;
+      };
+    };
+  }[];
+}
+
 export const genreOptions = [
   "Action🏃",
   "Romance💓",
@@ -61,6 +75,7 @@ const AddBook: NextPage = () => {
   const ctx = api.useContext();
   const { mutate, isLoading } = api.books.create.useMutation({
     onSuccess: () => {
+      void ctx.books.infinteFeed.invalidate();
       void ctx.books.getAll.invalidate();
       router.push("/");
     },
@@ -90,13 +105,43 @@ const AddBook: NextPage = () => {
     }
   };
 
-  // const handleBookDataChange = (data: BookFormData) => {
-  //   setTitle(data.title);
-  //   setAuthor(data.author);
-  //   setGenre(data.genre);
-  //   setDescription(data.description);
-  //   setBookCover(data.bookCover);
-  // }
+  const handleBookSearch = async (): Promise<void> => {
+    try {
+      const encodedTitle = encodeURIComponent(title);
+
+      const response = await fetch(
+        `https://www.googleapis.com/books/v1/volumes?q=${encodedTitle}`
+      );
+      const data = (await response.json()) as DataResponseBody;
+
+      if (data.items.length > 0) {
+        const book = data.items[0]?.volumeInfo;
+        if (!book) throw new Error("No book found.");
+        const fetchedAuthor = book.authors ? book.authors[0] : "N/A";
+        const fetchedGenre = book.categories ? book.categories[0] : "N/A";
+        const fetchedBookCover = book.imageLinks
+          ? book.imageLinks.thumbnail
+          : "";
+        const fetchedDescription = (book.description || "N/A").substring(
+          0,
+          255
+        );
+        console.log({
+          title,
+          author: fetchedAuthor,
+          genre: fetchedGenre,
+          description: fetchedDescription,
+          coverImage: fetchedBookCover,
+        });
+        setAuthor(fetchedAuthor ?? "");
+        setGenre(fetchedGenre ?? "");
+        setDescription(fetchedDescription);
+        setCoverImage(fetchedBookCover);
+      }
+    } catch (err) {
+      console.log("Error", err);
+    }
+  };
 
   const canSave =
     [title, author, genre, dateStarted, description].every(Boolean) &&
@@ -111,11 +156,6 @@ const AddBook: NextPage = () => {
       </Head>
       <main className="min-h-screen flex-col items-center p-4">
         <div>
-          {/* 
-            <div>
-            <GenreateBook onBookDataChange={handleBookDataChange} />
-            </div>
-          */}
           <section className="m-auto max-w-xl rounded-lg bg-slate-950 p-1">
             <div className="mx-auto max-w-2xl px-4 py-8">
               <h2 className="mb-4 text-xl font-bold text-white">
@@ -130,16 +170,25 @@ const AddBook: NextPage = () => {
                     >
                       Book Title
                     </label>
-                    <input
-                      type="text"
-                      name="title"
-                      id="title"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                      className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 text-sm text-white placeholder-gray-400"
-                      placeholder="Type Book Title"
-                      required
-                    />
+                    <div className="flex items-center gap-4">
+                      <input
+                        type="text"
+                        name="title"
+                        id="title"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 text-sm text-white placeholder-gray-400"
+                        placeholder="Type Book Title"
+                        required
+                      />
+                      <button
+                        className="inline-flex items-center rounded-lg bg-violet-600 p-0.5 text-center text-sm font-medium text-slate-200 hover:bg-violet-500 focus:ring-4 focus:ring-violet-500"
+                        type="button"
+                        onClick={(): void => void handleBookSearch()}
+                      >
+                        Search Book
+                      </button>
+                    </div>
                   </div>
                   <div className="w-full">
                     <label
@@ -184,6 +233,7 @@ const AddBook: NextPage = () => {
                       required
                       className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 text-sm text-white placeholder-gray-400"
                     >
+                      <option value={genre}>{genre}</option>
                       {genreOptions.map((genre) => (
                         <option key={genre} value={genre}>
                           {genre}

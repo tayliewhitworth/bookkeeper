@@ -12,7 +12,7 @@ const RecentBooks = () => {
     { getNextPageParam: (lastPage) => lastPage.nextCursor }
   );
 
-  const allBooks = books.data?.pages.flatMap((page) => page.books)
+  const allBooks = books.data?.pages.flatMap((page) => page.books);
 
   return (
     <InfiniteBookList
@@ -53,9 +53,9 @@ const Home: NextPage = () => {
   return (
     <>
       <main className="min-h-screen flex-col items-center">
-        <div className="flex items-center justify-between px-6 py-5 mx-5">
+        <div className="flex items-center justify-between gap-5 p-5 max-w-sm m-auto md:max-w-2xl">
           <h1 className="text-3xl font-bold text-violet-300">Book Club</h1>
-          <div className="rounded bg-violet-500 p-2 font-medium text-slate-950 transition-colors hover:bg-violet-600 text-sm">
+          <div className="rounded-lg bg-violet-500 p-2 text-sm font-medium text-slate-950 transition-colors hover:bg-violet-600">
             {isSignedIn ? (
               <Link href="/add-book">+ Add Book</Link>
             ) : (
@@ -63,7 +63,6 @@ const Home: NextPage = () => {
             )}
           </div>
         </div>
-        {/* <Feed /> */}
         <RecentBooks />
       </main>
     </>

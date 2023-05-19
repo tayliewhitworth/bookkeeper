@@ -128,7 +128,7 @@ const ProfileFeed = (props: { userId: string }) => {
           </button>
         </div>
       </div>
-      <div className="m-auto grid grid-cols-1 justify-items-center gap-3 p-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="flex flex-col gap-4 py-4">
         {data && data.length > 0 ? (
           data.map((fullBook) => (
             <BookPosts key={fullBook.book.id} {...fullBook} />
