@@ -91,7 +91,7 @@ const Home: NextPage = () => {
                   {showItems ? "-" : "+"}
                 </button>
                 <div
-                  className={`absolute right-0 top-10 h-max min-w-max flex-col items-start gap-1 rounded-lg bg-violet-500 p-2 ${
+                  className={`absolute right-0 top-10 z-50 h-max min-w-max flex-col items-start gap-1 rounded-lg bg-violet-500 p-2 ${
                     showItems ? "flex" : "hidden"
                   }`}
                 >
