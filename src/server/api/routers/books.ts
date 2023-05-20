@@ -46,7 +46,7 @@ export const booksRouter = createTRPCRouter({
     .input(
       z.object({ limit: z.number().optional(), cursor: z.object({ id: z.string(), createdAt: z.date()}).optional(), })
     )
-    .query(async ({ ctx, input: { limit = 5, cursor} }) => {
+    .query(async ({ ctx, input: { limit = 10, cursor} }) => {
       const books = await ctx.prisma.book.findMany({
         take: limit + 1,
         cursor: cursor ? { createdAt_id: cursor } : undefined,

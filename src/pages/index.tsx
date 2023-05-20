@@ -1,10 +1,11 @@
 import { type NextPage } from "next";
 import { LoadingSpinner } from "~/components/loading";
-// import BookPosts from "~/components/BookPosts";
+import BookPosts from "~/components/BookPosts";
 import { api } from "~/utils/api";
 import Link from "next/link";
 import { useUser, SignInButton } from "@clerk/nextjs";
 import { InfiniteBookList } from "~/components/InfiniteBookList";
+import { useState } from "react";
 
 const RecentBooks = () => {
   const books = api.books.infinteFeed.useInfiniteQuery(
@@ -25,21 +26,41 @@ const RecentBooks = () => {
   );
 };
 
-// const Feed = () => {
-//   const { data } = api.books.getAll.useQuery();
+const Feed = () => {
+  // const { data } = api.books.getAll.useQuery();
+  const { user } = useUser();
+  const { data, isLoading } = api.profile.getUserFollowing.useQuery({
+    userId: user?.id ?? "",
+  });
 
-//   return (
-//     <div className="m-auto grid grid-cols-1 justify-items-center gap-3 p-4 sm:grid-cols-2 lg:grid-cols-3">
-//       {data?.map(({ book, user }) => (
-//         <BookPosts key={book.id} book={book} user={user} />
-//       ))}
-//     </div>
-//   );
-// };
+  if (isLoading)
+    return (
+      <div>
+        <LoadingSpinner />
+      </div>
+    );
+
+  if (!data)
+    return (
+      <div className="flex items-center justify-center text-center">
+        Looks like you are not following anyone!🥲
+      </div>
+    );
+
+  return (
+    <div className="flex flex-col gap-4 py-4">
+      {data.books.map(({ book, user }) => (
+        <BookPosts key={book.id} book={book} user={user} />
+      ))}
+    </div>
+  );
+};
 
 const Home: NextPage = () => {
   const { data, isLoading } = api.books.getAll.useQuery();
   const { isSignedIn } = useUser();
+  const [showFollowing, setShowFollowing] = useState(false);
+  const [showItems, setShowItems] = useState(false);
 
   if (isLoading)
     return (
@@ -50,20 +71,52 @@ const Home: NextPage = () => {
 
   if (!data) return <div>Something went wrong...</div>;
 
+  function handleShowFollowing() {
+    setShowFollowing((prev) => !prev);
+    setShowItems(false);
+  }
+
   return (
     <>
       <main className="min-h-screen flex-col items-center">
-        <div className="flex items-center justify-between gap-5 p-5 max-w-sm m-auto md:max-w-2xl">
+        <div className="m-auto flex max-w-sm items-center justify-between gap-5 p-5 md:max-w-2xl">
           <h1 className="text-3xl font-bold text-violet-300">Book Club</h1>
-          <div className="rounded-lg bg-violet-500 p-2 text-sm font-medium text-slate-950 transition-colors hover:bg-violet-600">
+          <div>
             {isSignedIn ? (
-              <Link href="/add-book">+ Add Book</Link>
+              <div className="relative flex flex-col items-end rounded-lg bg-violet-500 px-2 pb-1 text-sm font-medium text-slate-950 transition-colors hover:bg-violet-600">
+                <button
+                  onClick={() => setShowItems((prev) => !prev)}
+                  className="font-semi-bold text-xl"
+                >
+                  {showItems ? "-" : "+"}
+                </button>
+                <div
+                  className={`absolute right-0 top-10 h-max min-w-max flex-col items-start gap-1 rounded-lg bg-violet-500 p-2 ${
+                    showItems ? "flex" : "hidden"
+                  }`}
+                >
+                  <Link
+                    href="/add-book"
+                    className=" w-full border-b border-slate-950 p-2 transition-all hover:rounded hover:bg-slate-950 hover:text-white"
+                  >
+                    Add Book
+                  </Link>
+                  <button
+                    onClick={handleShowFollowing}
+                    className=" w-full border-b border-slate-950 p-2 text-left transition-all hover:rounded hover:bg-slate-950 hover:text-white"
+                  >
+                    {showFollowing ? "Show All" : "Show Following"}
+                  </button>
+                </div>
+              </div>
             ) : (
-              <SignInButton />
+              <div className="rounded-lg bg-violet-500 p-2 text-sm font-medium text-slate-950 transition-colors hover:bg-violet-600">
+                <SignInButton />
+              </div>
             )}
           </div>
         </div>
-        <RecentBooks />
+        {showFollowing ? <Feed /> : <RecentBooks />}
       </main>
     </>
   );
