@@ -14,15 +14,6 @@ import { LoadingSpinner } from "~/components/loading";
 
 const placeholderImage = placeholder as StaticImageData;
 
-interface BookCoverResponseBody {
-  items: {
-    volumeInfo: {
-      imageLinks?: {
-        thumbnail?: string | null;
-      };
-    };
-  }[];
-}
 
 interface DataResponseBody {
   items: {
@@ -91,19 +82,6 @@ const AddBook: NextPage = () => {
 
   if (!user) return null;
 
-  const generateImage = async (): Promise<void> => {
-    try {
-      const response = await fetch(
-        `https://www.googleapis.com/books/v1/volumes?q=${title}`
-      );
-      const data = (await response.json()) as BookCoverResponseBody;
-      const bookCover: string | null | undefined =
-        data.items[0]?.volumeInfo?.imageLinks?.thumbnail;
-      setCoverImage(bookCover);
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   const handleBookSearch = async (): Promise<void> => {
     try {
@@ -126,13 +104,6 @@ const AddBook: NextPage = () => {
           0,
           255
         );
-        console.log({
-          title,
-          author: fetchedAuthor,
-          genre: fetchedGenre,
-          description: fetchedDescription,
-          coverImage: fetchedBookCover,
-        });
         setAuthor(fetchedAuthor ?? "");
         setGenre(fetchedGenre ?? "");
         setDescription(fetchedDescription);
@@ -170,7 +141,7 @@ const AddBook: NextPage = () => {
                     >
                       Book Title
                     </label>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3">
                       <input
                         type="text"
                         name="title"
@@ -182,7 +153,7 @@ const AddBook: NextPage = () => {
                         required
                       />
                       <button
-                        className="inline-flex items-center rounded-lg bg-violet-600 p-0.5 text-center text-sm font-medium text-slate-200 hover:bg-violet-500 focus:ring-4 focus:ring-violet-500"
+                        className="inline-flex items-center rounded-lg bg-violet-600 p-2.5 text-center text-sm font-medium text-slate-200 hover:bg-violet-500 focus:ring-4 focus:ring-violet-500 min-w-fit"
                         type="button"
                         onClick={(): void => void handleBookSearch()}
                       >
@@ -216,16 +187,6 @@ const AddBook: NextPage = () => {
                     >
                       Genre
                     </label>
-                    {/* <input
-                      type="text"
-                      name="genre"
-                      id="genre"
-                      value={genre}
-                      onChange={(e) => setGenre(e.target.value)}
-                      className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 text-sm text-white placeholder-gray-400"
-                      placeholder="Book Genre"
-                      required
-                    /> */}
                     <select
                       id="genre"
                       value={genre}
@@ -274,15 +235,9 @@ const AddBook: NextPage = () => {
                     />
                   </div>
                   <div className="sm:col-span-2">
-                    <div className="flex flex-wrap items-center justify-around gap-3 py-4">
-                      <button
-                        onClick={(): void => void generateImage()}
-                        type="button"
-                        className="inline-flex items-center rounded-lg bg-violet-600 px-5 py-2.5 text-center text-sm font-medium text-slate-200 hover:bg-violet-500 focus:ring-4 focus:ring-violet-500"
-                      >
-                        Generate Image Cover
-                      </button>
-                      {coverImage && (
+                    <div className="pb-4">
+
+                    {coverImage && (
                         <Image
                           width={80}
                           height={80}
@@ -340,6 +295,7 @@ const AddBook: NextPage = () => {
                             Well, that is our philosophy!
                           </h3>
                           <p>
+                            Just enter in the title of the book and press Search Book!
                             We currently use the Google Books API to generate a
                             cover image for your book. We are working on a
                             feature to allow you to upload your own image in the

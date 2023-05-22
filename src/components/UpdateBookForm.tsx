@@ -10,6 +10,7 @@ import { LoadingSpinner } from "~/components/loading";
 import { useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 
+import { genreOptions } from "~/pages/add-book";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
@@ -157,11 +158,18 @@ const UpdateBook = (props: { id: string }) => {
                       >
                         Genre
                       </label>
-                      <input
+                      <select
                         defaultValue={data.book.genre}
-                        {...register("genre", { required: true })}
                         className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 text-sm text-white placeholder-gray-400"
-                      />
+                        {...register("genre", { required: true })}
+                      >
+                        <option value={data.book.genre}>{data.book.genre}</option>
+                        {genreOptions.map((genre) => (
+                          <option key={genre} value={genre}>
+                            {genre}
+                          </option>
+                        ))}
+                      </select>
                       {errors.genre && <span>This field is required</span>}
                     </div>
                     <div className="w-full">
@@ -202,6 +210,8 @@ const UpdateBook = (props: { id: string }) => {
                       />
                     </div>
 
+                    
+
                     <div className="w-fit">
                       <label
                         htmlFor="rating"
@@ -221,30 +231,10 @@ const UpdateBook = (props: { id: string }) => {
                       />
                     </div>
 
-                    <div className="sm:col-span-2">
-                      <label
-                        htmlFor="description"
-                        className="mb-2 block text-sm font-medium text-white"
-                      >
-                        Description
-                      </label>
-                      <textarea
-                        defaultValue={data.book.description}
-                        maxLength={255}
-                        rows={5}
-                        {...register("description", { required: true })}
-                        className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 text-sm text-white placeholder-gray-400"
-                      />
-                      {errors.description && (
-                        <span>This field is required</span>
-                      )}
-                      <div className="pt-2 text-xs">
-                        {data.book.description.length}/255
-                      </div>
-                    </div>
-                  </div>
+                    
 
-                  <div className="mt-4">
+                    <div className="sm:col-span-2">
+                    <div className="pb-4">
                     <p className="flex items-center text-sm text-gray-400">
                       Where is my book cover?{" "}
                       <button
@@ -274,7 +264,7 @@ const UpdateBook = (props: { id: string }) => {
                       data-popover
                       id="popover-description"
                       role="tooltip"
-                      className={`absolute z-10 inline-block w-72 rounded-lg border text-sm shadow-sm transition-opacity duration-300 border-gray-600 bg-gray-800 text-gray-400 ${
+                      className={`absolute z-10 inline-block w-72 rounded-lg border border-gray-600 bg-gray-800 text-sm text-gray-400 shadow-sm transition-opacity duration-300 ${
                         showInfo ? "visible opacity-100" : "invisible opacity-0"
                       }`}
                     >
@@ -298,6 +288,27 @@ const UpdateBook = (props: { id: string }) => {
                         </p>
                       </div>
                       <div data-popper-arrow></div>
+                    </div>
+                  </div>
+                      <label
+                        htmlFor="description"
+                        className="mb-2 block text-sm font-medium text-white"
+                      >
+                        Description
+                      </label>
+                      <textarea
+                        defaultValue={data.book.description}
+                        maxLength={255}
+                        rows={5}
+                        {...register("description", { required: true })}
+                        className="focus:ring-primary-500 focus:border-primary-500 block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 text-sm text-white placeholder-gray-400"
+                      />
+                      {errors.description && (
+                        <span>This field is required</span>
+                      )}
+                      <div className="pt-2 text-xs">
+                        {data.book.description.length}/255
+                      </div>
                     </div>
                   </div>
 

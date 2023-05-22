@@ -201,7 +201,7 @@ export const profileRouter = createTRPCRouter({
       const userFollowing = await ctx.prisma.followerRelationship.findMany({
         where: { userId: input.userId },
         include: { profile: true },
-        // orderBy: [{ createdAt: "desc" }],
+        orderBy: [{ createdAt: "desc" }],
       });
 
       if (!userFollowing || userFollowing.length === 0) {
@@ -219,11 +219,13 @@ export const profileRouter = createTRPCRouter({
         const userBooks = await ctx.prisma.book.findMany({
           where: { userId: profile.user.id },
           take: 100,
-          orderBy: [{ createdAt: "desc" }],
+          orderBy: [{ createdAt: "desc" }, { id: "desc" }],
         })
         .then(addUserToBooks)
         followingBooks = [...followingBooks, ...userBooks]
       }
+
+      followingBooks.sort((a, b) => (a.book.createdAt < b.book.createdAt) ? 1 : -1);
 
       return {
         following: userFollowing,
