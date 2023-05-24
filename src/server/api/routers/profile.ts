@@ -11,19 +11,9 @@ import { filterUserForClient } from "~/server/helpers/filterUserForClient";
 
 import { addUserToProfile } from "~/server/helpers/addUserToProfile";
 import { addUserToBooks } from "~/server/helpers/addUserToBooks";
-// import type { Book } from "@prisma/client";
+
 import type { BookData } from "~/server/helpers/bookType";
 
-// type UserBook = {
-//   book: Book;
-//   user: {
-//       username: string;
-//       id: string;
-//       profileImageUrl: string;
-//       name: string;
-//       externalUsername: string | null;
-//   };
-// }
 
 type UserBooks = BookData[];
 
@@ -72,13 +62,21 @@ export const profileRouter = createTRPCRouter({
       return filterUserForClient(user);
     }),
 
-  getAllUsers: publicProcedure.query(async () => {
+  getAllUsers: publicProcedure.query(async ({ ctx }) => {
     const users = await clerkClient.users.getUserList({
       limit: 100,
       orderBy: "-created_at",
     });
 
-    return users.map(filterUserForClient);
+    const profiles = await ctx.prisma.profile.findMany({
+      take: 100,
+      orderBy: [{ createdAt: "desc" }],
+    });
+
+    return {
+      users: users.map(filterUserForClient),
+      profiles: profiles,
+    }
   }),
 
   getProfileByUserId: publicProcedure
@@ -189,6 +187,8 @@ export const profileRouter = createTRPCRouter({
         })
       );
 
+      followersWithUsers.sort((a, b) =>  a && b ? a.followedBy.user.name > b.followedBy.user.name ? 1 : -1 : 0)
+
       return {
         profile: resolvedProfile,
         followers: profileWithFollowers.followers,
@@ -216,16 +216,22 @@ export const profileRouter = createTRPCRouter({
       let followingBooks: UserBooks = [];
 
       for (const profile of resolvedProfiles) {
-        const userBooks = await ctx.prisma.book.findMany({
-          where: { userId: profile.user.id },
-          take: 100,
-          orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-        })
-        .then(addUserToBooks)
-        followingBooks = [...followingBooks, ...userBooks]
+        const userBooks = await ctx.prisma.book
+          .findMany({
+            where: { userId: profile.user.id },
+            take: 100,
+            orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+          })
+          .then(addUserToBooks);
+        followingBooks = [...followingBooks, ...userBooks];
       }
 
-      followingBooks.sort((a, b) => (a.book.createdAt < b.book.createdAt) ? 1 : -1);
+      resolvedProfiles.sort((a, b) =>
+        a.user.name > b.user.name ? 1 : -1
+      );
+      followingBooks.sort((a, b) =>
+        a.book.createdAt < b.book.createdAt ? 1 : -1
+      );
 
       return {
         following: userFollowing,

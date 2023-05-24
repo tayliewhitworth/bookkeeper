@@ -57,19 +57,19 @@ const Feed = () => {
 };
 
 const Home: NextPage = () => {
-  const { data, isLoading } = api.books.getAll.useQuery();
+  // const { data, isLoading } = api.books.getAll.useQuery();
   const { isSignedIn } = useUser();
   const [showFollowing, setShowFollowing] = useState(false);
   const [showItems, setShowItems] = useState(false);
 
-  if (isLoading)
-    return (
-      <div className="mt-4 flex items-center justify-center">
-        <LoadingSpinner />
-      </div>
-    );
+  // if (isLoading)
+  //   return (
+  //     <div className="mt-4 flex items-center justify-center">
+  //       <LoadingSpinner />
+  //     </div>
+  //   );
 
-  if (!data) return <div>Something went wrong...</div>;
+  // if (!data) return <div>Something went wrong...</div>;
 
   function handleShowFollowing() {
     setShowFollowing((prev) => !prev);
@@ -83,10 +83,10 @@ const Home: NextPage = () => {
           <h1 className="text-3xl font-bold text-violet-300">Book Club</h1>
           <div>
             {isSignedIn ? (
-              <div className="relative flex flex-col items-end rounded-lg bg-violet-500 px-2 pb-1 text-sm font-medium text-slate-950 transition-colors hover:bg-violet-600">
+              <div className="relative flex flex-col items-end text-sm font-medium text-slate-950">
                 <button
                   onClick={() => setShowItems((prev) => !prev)}
-                  className="font-semi-bold text-xl"
+                  className="font-semi-bold text-xl rounded-lg bg-violet-500 w-8 h-8 flex items-center justify-center transition-all hover:bg-violet-600"
                 >
                   {showItems ? "-" : "+"}
                 </button>
