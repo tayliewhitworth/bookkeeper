@@ -99,7 +99,7 @@ const AddBook: NextPage = () => {
         const fetchedGenre = book.categories ? book.categories[0] : "N/A";
         const fetchedBookCover = book.imageLinks
           ? book.imageLinks.thumbnail
-          : "";
+          : data.items[1]?.volumeInfo?.imageLinks?.thumbnail ?? placeholderImage;
         const fetchedDescription = (book.description || "N/A").substring(
           0,
           255
