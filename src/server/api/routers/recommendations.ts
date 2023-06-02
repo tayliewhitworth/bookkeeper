@@ -20,7 +20,6 @@ const ratelimit = new Ratelimit({
   analytics: true,
 });
 
-
 export const recsRouter = createTRPCRouter({
   generateRecommendations: privateProcedure
     .input(z.object({ titles: z.optional(z.array(z.string())) }))
