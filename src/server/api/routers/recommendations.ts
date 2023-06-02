@@ -6,10 +6,11 @@ import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 
 import { Configuration, OpenAIApi } from "openai";
+import { env } from "~/env.mjs";
 
 const openai = new OpenAIApi(
   new Configuration({
-    apiKey: process.env.OPENAI_API_KEY,
+    apiKey: env.OPENAI_API_KEY,
   })
 );
 
