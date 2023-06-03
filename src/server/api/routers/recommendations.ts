@@ -4,15 +4,8 @@ import { TRPCError } from "@trpc/server";
 
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
+import { type ChatGPTResponse, createChatCompletion } from "~/server/helpers/openAI";
 
-import { Configuration, OpenAIApi } from "openai";
-import { env } from "~/env.mjs";
-
-const openai = new OpenAIApi(
-  new Configuration({
-    apiKey: env.OPENAI_API_KEY,
-  })
-);
 
 // create a new ratelimiter that allows 5 requests per minute
 const ratelimit = new Ratelimit({
@@ -43,43 +36,20 @@ export const recsRouter = createTRPCRouter({
 
       const titles = input.titles.join(', ')
 
-      const prompt = `Recommend three different books based on the following book titles that don't have the same title:\n${titles}\n\nHave the format of your response be Title: Book title newline Author: Book Author newline Description: Book Description`;
+      const prompt = `Please recommend exactly three different books based on the following book titles. Ensure that the recommended books have unique titles and do not match any of the input titles:\n${titles}\n\nPlease provide the recommendations in the following format: Title: [Book Title] newline Author: [Book Author] newline Description: [Book Description]`;
 
-      let response;
-      try {
-        response = await openai.createChatCompletion({
-          model: "gpt-3.5-turbo",
-          messages: [{ role: "user", content: prompt }],
-        });
-      } catch (e) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to generate recommendations",
-        });
+      const payload: ChatGPTResponse = {
+        model: "gpt-3.5-turbo",
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.4,
+        top_p: 1,
+        frequency_penalty: 0,
+        presence_penalty: 0,
+        max_tokens: 3000,
+        n: 1,
       }
 
-      const rawRecommendations = response.data.choices[0]?.message?.content;
-
-      if (!rawRecommendations) {
-        return null;
-      }
-
-      const recs = rawRecommendations.split("\n\n").map((rec) => {
-        const lines = rec.split("\n");
-        const title = lines[0]?.split(": ")[1]?.trim();
-        const author = lines[1]?.split(": ")[1]?.trim();
-        const description = lines[2]?.split(": ")[1]?.trim();
-
-        if (!title || !author || !description) {
-          throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Failed to parse recommendation",
-          });
-        }
-
-        return { title, author, description };
-      });
-
-      return recs;
+      const recs = await createChatCompletion(payload)
+      return recs
     }),
 });

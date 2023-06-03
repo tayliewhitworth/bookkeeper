@@ -16,7 +16,7 @@ import { toast } from "react-hot-toast";
 
 const RecommendedBooks = (props: { titles: string[] }) => {
   const [show, setShow] = useState(false);
-
+  
   const generateRecommendations =
     api.recs.generateRecommendations.useMutation();
 
@@ -24,7 +24,7 @@ const RecommendedBooks = (props: { titles: string[] }) => {
     setShow(true);
     try {
       await generateRecommendations.mutateAsync({
-        titles: props.titles.slice(0, 5),
+        titles: props.titles.length < 5 ? props.titles : props.titles.slice(0, 5)
       });
     } catch (error) {
       toast.error("Something went wrong, try again later!");
