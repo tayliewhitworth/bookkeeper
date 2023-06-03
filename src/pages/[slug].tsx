@@ -16,36 +16,31 @@ import { toast } from "react-hot-toast";
 
 const RecommendedBooks = (props: { titles: string[] }) => {
   const [show, setShow] = useState(false);
-  const [bookRecs, setBookRecs] = useState<
-    { title: string; author: string; description: string }[]
-  >([]);
-  const { mutate, isLoading } = api.recs.generateRecommendations.useMutation({
-    onSuccess: (data) => {
-      console.log(data);
-      setBookRecs(data ?? []);
-    },
-    onError: (err) => {
-      const errMsg = err?.data?.zodError?.fieldErrors.content;
-      if (errMsg && errMsg[0]) {
-        toast.error(errMsg[0]);
-      } else {
-        toast.error("Unable to find book recs!...");
-      }
-    },
-  });
 
-  const handleClick = () => {
-    mutate({ titles: props.titles.slice(0, 5) });
+  const generateRecommendations =
+    api.recs.generateRecommendations.useMutation();
+
+  const handleClick = async () => {
     setShow(true);
+    try {
+      await generateRecommendations.mutateAsync({
+        titles: props.titles.slice(0, 5),
+      });
+    } catch (error) {
+      toast.error("Something went wrong, try again later!");
+      console.error(error);
+    }
   };
 
-  console.log(bookRecs);
+  const { data, isLoading, isError } = generateRecommendations;
+
+  if (isError) toast.error("Something went wrong, try again later!");
 
   return (
     <>
       <div className="fixed bottom-[-5.5rem] left-6 z-30 h-40 w-40 rounded-full">
         <button
-          onClick={handleClick}
+          onClick={(): void => void handleClick()}
           className="rounded-lg bg-violet-500 px-2 py-2 text-xs shadow-lg"
         >
           Book Recommendations
@@ -60,33 +55,27 @@ const RecommendedBooks = (props: { titles: string[] }) => {
             X
           </button>
           <div className="flex items-center px-4">
-            {isLoading ? (
-              <div className="flex flex-col items-center justify-center">
-                <LoadingSpinner />
-                <p>Loading Recommendations!</p>
-              </div>
-            ) : (
-              <div className="flex flex-col gap-5">
-                {bookRecs.length > 0 ? (
-                  bookRecs.map((book, index) => (
-                    <div key={index}>
-                      <p className="font-bold text-slate-950">{book.title}</p>
-                      <p className="text-sm text-slate-300">By {book.author}</p>
-                      <p className="text-xs">
-                        {book.description.slice(0, 100)}...
-                      </p>
-                    </div>
-                  ))
-                ) : (
-                  <div>
-                    <p className="text-sm text-slate-300">
-                      Hmm... looks like the AI could not find any books for you!
-                      Try again later!
+            <div className="flex flex-col gap-5">
+              {isLoading && <LoadingSpinner />}
+
+              {data ? (
+                data.map((book, index) => (
+                  <div key={index}>
+                    <p className="font-bold text-slate-950">{book.title}</p>
+                    <p className="text-sm text-slate-300">By {book.author}</p>
+                    <p className="text-xs">
+                      {book.description.slice(0, 100)}...
                     </p>
                   </div>
-                )}
-              </div>
-            )}
+                ))
+              ) : (
+                <div>
+                  <p className="text-sm text-slate-300">
+                    A.I is Trying to find you books!
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
