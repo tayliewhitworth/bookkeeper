@@ -35,7 +35,7 @@ interface Book {
 
 const BookItem = (props: { book: Book }) => {
   const { isSignedIn } = useUser();
-  const { book } = props
+  const { book } = props;
 
   const { mutate, isLoading, isSuccess, isError } =
     api.wishlistItem.create.useMutation();
@@ -45,7 +45,7 @@ const BookItem = (props: { book: Book }) => {
     author: string;
     description: string;
   }) => {
-    let bookDescription = '';
+    let bookDescription = "";
     if (book.description.length > 255) {
       bookDescription = book.description.substring(0, 255);
     } else {
@@ -101,7 +101,7 @@ const BookItem = (props: { book: Book }) => {
   );
 };
 
-const BookSearch = () => {
+const BookSearch = (props: { type: string }) => {
   const [data, setData] = useState<
     {
       title: string;
@@ -112,14 +112,21 @@ const BookSearch = () => {
   >();
   const [searchTerm, setSearchTerm] = useState("");
 
-
   const handleBookSearch = async (): Promise<void> => {
     try {
       const encodedQuery = encodeURIComponent(searchTerm);
+      let response;
 
-      const response = await fetch(
-        `https://www.googleapis.com/books/v1/volumes?q=subject:${encodedQuery}&maxResults=10&orderBy=newest`
-      );
+      if (props.type === "genres") {
+        response = await fetch(
+          `https://www.googleapis.com/books/v1/volumes?q=subject:${encodedQuery}&maxResults=10`
+        );
+      } else {
+        response = await fetch(
+          `https://www.googleapis.com/books/v1/volumes?q=inauthor:${encodedQuery}&maxResults=10`
+        );
+      }
+
       const data = (await response.json()) as DataResponseBody;
 
       if (data.items.length > 0) {
@@ -154,7 +161,7 @@ const BookSearch = () => {
   };
 
   return (
-    <div>
+    <>
       <div className="flex items-center justify-center p-4">
         <form
           onSubmit={(e): void => {
@@ -165,22 +172,34 @@ const BookSearch = () => {
         >
           <input
             type="text"
-            placeholder="Search for books by genre"
+            placeholder={`Search for books by ${props.type}`}
             value={searchTerm}
             className="w-full max-w-sm rounded-md border-2 border-gray-600 bg-gray-600 p-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-violet-300"
             onChange={(e) => setSearchTerm(e.target.value)}
+            minLength={1}
+            maxLength={50}
+            required
           />
-          <button type="submit" className="rounded-md bg-slate-950 p-2 text-sm">
+          <button
+            disabled={!searchTerm}
+            type="submit"
+            className="rounded-md bg-slate-950 p-2 text-sm"
+          >
             Search
           </button>
         </form>
       </div>
       <div className="m-auto grid place-content-center gap-5 p-5">
-        {data?.map((book) => (
-          <BookItem key={book.title} book={book} />
-        ))}
+        {data?.map((book) => <BookItem key={book.title} book={book} />) ?? (
+          <div>
+            <p className="text-center text-sm text-slate-500">
+              This search will return the top 10 books associated with the{" "}
+              {props.type.slice(0, -1)} you enter!
+            </p>
+          </div>
+        )}
       </div>
-    </div>
+    </>
   );
 };
 
@@ -274,8 +293,14 @@ const ReaderSearch = () => {
 };
 
 const Discover: NextPage = () => {
-  const [showSearch, setShowSearch] = useState(false);
   const { data, isLoading } = api.profile.getAllUsers.useQuery();
+  const [searchType, setSearchType] = useState<
+    "authors" | "readers" | "genres"
+  >("readers");
+
+  const handleTypeClick = (type: "readers" | "genres" | "authors") => {
+    setSearchType(type);
+  };
 
   if (isLoading)
     return (
@@ -294,29 +319,42 @@ const Discover: NextPage = () => {
             Discover
           </h1>
           <div className="flex flex-col gap-2 text-center text-sm">
-            <p>Search By:</p>
+            <p>Find books by</p>
             <div className="flex items-center gap-3">
               <button
-                onClick={() => setShowSearch(false)}
+                onClick={() => handleTypeClick("readers")}
                 className={`${
-                  showSearch ? "bg-slate-950" : "bg-violet-500"
+                  searchType === "readers" ? "bg-violet-500" : "bg-slate-950"
                 } rounded-xl p-2`}
               >
                 Readers
               </button>
               <button
-                onClick={() => setShowSearch(true)}
+                onClick={() => handleTypeClick("genres")}
                 className={` ${
-                  showSearch ? "bg-violet-500" : "bg-slate-950"
+                  searchType === "genres" ? "bg-violet-500" : "bg-slate-950"
                 } rounded-xl p-2`}
               >
-                Genre
+                Genres
+              </button>
+              <button
+                onClick={() => handleTypeClick("authors")}
+                className={` ${
+                  searchType === "authors" ? "bg-violet-500" : "bg-slate-950"
+                } rounded-xl p-2`}
+              >
+                Authors
               </button>
             </div>
           </div>
         </div>
-        {!showSearch ? <ReaderSearch /> : <BookSearch />}
-        {/* <Feed /> */}
+        {searchType === "readers" ? (
+          <ReaderSearch />
+        ) : searchType === "genres" ? (
+          <BookSearch type="genres" />
+        ) : (
+          <BookSearch type="authors" />
+        )}
       </main>
     </>
   );
