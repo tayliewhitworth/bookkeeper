@@ -12,76 +12,77 @@ import { useState } from "react";
 
 import { UpdateProfile, CreateProfile } from "~/components/ProfileEdit";
 import { FollowBtn, FollowerCount } from "~/components/FollowBtn";
-import { toast } from "react-hot-toast";
+// import { toast } from "react-hot-toast";
 
-const RecommendedBooks = (props: { titles: string[] }) => {
-  const [show, setShow] = useState(false);
-  
-  const generateRecommendations =
-    api.recs.generateRecommendations.useMutation();
+// const RecommendedBooks = (props: { titles: string[] }) => {
+//   const [show, setShow] = useState(false);
+//   // const [data, setData] = useState<{ title: string; author: string; description: string }[]>();
 
-  const handleClick = async () => {
-    setShow(true);
-    try {
-      await generateRecommendations.mutateAsync({
-        titles: props.titles.length < 5 ? props.titles : props.titles.slice(0, 5)
-      });
-    } catch (error) {
-      toast.error("Something went wrong, try again later!");
-      console.error(error);
-    }
-  };
+//   const generateRecommendations =
+//     api.recs.generateRecommendations.useMutation();
 
-  const { data, isLoading, isError } = generateRecommendations;
+//   const handleClick = async () => {
+//     setShow(true);
+//     try {
+//       await generateRecommendations.mutateAsync({
+//         titles: props.titles.length < 5 ? props.titles : props.titles.slice(0, 5)
+//       });
+//     } catch (error) {
+//       toast.error("Something went wrong, try again later!");
+//       console.error(error);
+//     }
+//   };
 
-  if (isError) toast.error("Something went wrong, try again later!");
+//   const { data, isLoading, isError } = generateRecommendations;
 
-  return (
-    <>
-      <div className="fixed bottom-[-5.5rem] left-6 z-30 h-40 w-40 rounded-full">
-        <button
-          onClick={(): void => void handleClick()}
-          className="rounded-lg bg-violet-500 px-2 py-2 text-xs shadow-lg"
-        >
-          Book Recommendations
-        </button>
-      </div>
-      {show && (
-        <div className="fixed bottom-20 z-40 flex h-96 w-80 flex-col items-start rounded-lg bg-violet-500 shadow-2xl sm:w-96">
-          <button
-            className="m-4 rounded-lg px-1 text-xl hover:bg-slate-400 hover:bg-opacity-50"
-            onClick={() => setShow(false)}
-          >
-            X
-          </button>
-          <div className="flex items-center px-4">
-            <div className="flex flex-col gap-5">
-              {isLoading && <LoadingSpinner />}
+//   if (isError) toast.error("Something went wrong, try again later!");
 
-              {data ? (
-                data.map((book, index) => (
-                  <div key={index}>
-                    <p className="font-bold text-slate-950">{book.title}</p>
-                    <p className="text-sm text-slate-300">By {book.author}</p>
-                    <p className="text-xs">
-                      {book.description.slice(0, 100)}...
-                    </p>
-                  </div>
-                ))
-              ) : (
-                <div>
-                  <p className="text-sm text-slate-300">
-                    A.I is Trying to find you books!
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-    </>
-  );
-};
+//   return (
+//     <>
+//       <div className="fixed bottom-[-5.5rem] left-6 z-30 h-40 w-40 rounded-full">
+//         <button
+//           onClick={(): void => void handleClick()}
+//           className="rounded-lg bg-violet-500 px-2 py-2 text-xs shadow-lg"
+//         >
+//           Book Recommendations
+//         </button>
+//       </div>
+//       {show && (
+//         <div className="fixed bottom-20 z-40 flex h-96 w-80 flex-col items-start rounded-lg bg-violet-500 shadow-2xl sm:w-96">
+//           <button
+//             className="m-4 rounded-lg px-1 text-xl hover:bg-slate-400 hover:bg-opacity-50"
+//             onClick={() => setShow(false)}
+//           >
+//             X
+//           </button>
+//           <div className="flex items-center px-4">
+//             <div className="flex flex-col gap-5">
+//               {isLoading && <LoadingSpinner />}
+
+//               {data ? (
+//                 data.map((book, index) => (
+//                   <div key={index}>
+//                     <p className="font-bold text-slate-950">{book.title}</p>
+//                     <p className="text-sm text-slate-300">By {book.author}</p>
+//                     <p className="text-xs">
+//                       {book.description.slice(0, 100)}...
+//                     </p>
+//                   </div>
+//                 ))
+//               ) : (
+//                 <div>
+//                   <p className="text-sm text-slate-300">
+//                     A.I is Trying to find you books!
+//                   </p>
+//                 </div>
+//               )}
+//             </div>
+//           </div>
+//         </div>
+//       )}
+//     </>
+//   );
+// };
 
 const ProfileBio = (props: { userId: string }) => {
   const { data, isLoading } = api.profile.getProfileByUserId.useQuery({
@@ -155,12 +156,12 @@ const ProfileFeed = (props: { userId: string }) => {
     userId: props.userId,
   });
 
-  const { isSignedIn } = useUser();
+  // const { isSignedIn } = useUser();
 
   const data = showLikedBooks ? likedBooks.data?.books : readBooks.data;
   const isLoading = showLikedBooks ? likedBooks.isLoading : readBooks.isLoading;
 
-  const bookTitles = readBooks.data?.map((book) => book.book.title) ?? [];
+  // const bookTitles = readBooks.data?.map((book) => book.book.title) ?? [];
 
   if (isLoading)
     return (
@@ -172,9 +173,9 @@ const ProfileFeed = (props: { userId: string }) => {
   return (
     <>
       <div className="mx-auto my-3 flex max-w-fit items-center justify-center gap-4">
-        {isSignedIn && bookTitles.length > 0 && (
+        {/* {isSignedIn && bookTitles.length > 0 && (
           <RecommendedBooks titles={bookTitles} />
-        )}
+        )} */}
         <div>
           <button
             onClick={() => setShowLikedBooks(false)}
