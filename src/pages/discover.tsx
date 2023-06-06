@@ -45,10 +45,16 @@ const BookItem = (props: { book: Book }) => {
     author: string;
     description: string;
   }) => {
+    let bookDescription = '';
+    if (book.description.length > 255) {
+      bookDescription = book.description.substring(0, 255);
+    } else {
+      bookDescription = book.description;
+    }
     mutate({
       title: book.title,
       author: book.author,
-      description: book.description,
+      description: bookDescription,
       link: `https://amazon.com/s?k=${book.title}+${book.author}`,
     });
   };
